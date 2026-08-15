@@ -22,20 +22,16 @@
 import SwiftUI
 
 struct ContentView: View {
-    private var models: [Model] {
-        modelFileURLs.map { url in
-            Model(url: url)
-        }
-    }
-
     private let columns = [
         GridItem(.adaptive(minimum: 360, maximum: 360), spacing: 20)
     ]
 
     private let folderPickerService = FolderPickerService()
+    private let modelLoaderService = ModelLoaderService()
 
     @State private var selectedFolder: URL?
-    @State private var modelFileURLs: [URL] = []
+    @State private var models: [Model] = []
+    @State private var loadingError: String?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -66,14 +62,18 @@ struct ContentView: View {
                     if let folder = folderPickerService.selectFolder() {
                         selectedFolder = folder
 
-                        do {
-                            modelFileURLs = try ModelFileService()
-                                .findModelFiles(in: folder)
+                        Task {
+                            do {
+                                let loadedModels = try await modelLoaderService.loadModels(
+                                    from: folder
+                                )
 
-                            print("Found \(modelFileURLs.count) .io files")
-                        } catch {
-                            modelFileURLs = []
-                            print("Failed to read folder: \(error)")
+                                models = loadedModels
+                                loadingError = nil
+                            } catch {
+                                models = []
+                                loadingError = error.localizedDescription
+                            }
                         }
                     }
                 }
@@ -142,6 +142,12 @@ struct ContentView: View {
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 6)
+
+                if let loadingError {
+                    Text(loadingError)
+                        .foregroundColor(.red)
+                        .padding()
+                }
 
                 ScrollView {
                     LazyVGrid(
