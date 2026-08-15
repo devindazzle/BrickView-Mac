@@ -23,6 +23,8 @@
 		3B5154493030B6E9001D70DC /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 3B5154483030B6E9001D70DC /* ZIPFoundation */; };
 		3B51544D3030B959001D70DC /* 383-knights-tournament.io in Resources */ = {isa = PBXBuildFile; fileRef = 3B51544C3030B959001D70DC /* 383-knights-tournament.io */; };
 		3B51544F3030B9A8001D70DC /* ModelMetadataServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51544E3030B9A8001D70DC /* ModelMetadataServiceTests.swift */; };
+		3B5154513030BBB2001D70DC /* ModelLoaderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154503030BBB2001D70DC /* ModelLoaderService.swift */; };
+		3B5154533030BC4B001D70DC /* ModelLoaderServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154523030BC4B001D70DC /* ModelLoaderServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -62,6 +64,8 @@
 		3B5154453030B5AB001D70DC /* ModelMetadataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelMetadataService.swift; sourceTree = "<group>"; };
 		3B51544C3030B959001D70DC /* 383-knights-tournament.io */ = {isa = PBXFileReference; lastKnownFileType = file; path = "383-knights-tournament.io"; sourceTree = "<group>"; };
 		3B51544E3030B9A8001D70DC /* ModelMetadataServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelMetadataServiceTests.swift; sourceTree = "<group>"; };
+		3B5154503030BBB2001D70DC /* ModelLoaderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelLoaderService.swift; sourceTree = "<group>"; };
+		3B5154523030BC4B001D70DC /* ModelLoaderServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelLoaderServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -124,6 +128,7 @@
 				3B5154413030AEEC001D70DC /* FolderPickerService.swift */,
 				3B5154433030B0C4001D70DC /* ModelFileService.swift */,
 				3B5154453030B5AB001D70DC /* ModelMetadataService.swift */,
+				3B5154503030BBB2001D70DC /* ModelLoaderService.swift */,
 			);
 			path = BrickView;
 			sourceTree = "<group>";
@@ -142,6 +147,7 @@
 				3B51544C3030B959001D70DC /* 383-knights-tournament.io */,
 				3B51542230307F9F001D70DC /* BrickViewTests.swift */,
 				3B51544E3030B9A8001D70DC /* ModelMetadataServiceTests.swift */,
+				3B5154523030BC4B001D70DC /* ModelLoaderServiceTests.swift */,
 			);
 			path = BrickViewTests;
 			sourceTree = "<group>";
@@ -296,6 +302,7 @@
 				3B5154403030A6B7001D70DC /* Model.swift in Sources */,
 				3B5154443030B0C4001D70DC /* ModelFileService.swift in Sources */,
 				3B51543E3030A4D6001D70DC /* ModelCardView.swift in Sources */,
+				3B5154513030BBB2001D70DC /* ModelLoaderService.swift in Sources */,
 				3B51543C3030A022001D70DC /* WindowConfigurator.swift in Sources */,
 				3B51541330307F9D001D70DC /* ContentView.swift in Sources */,
 				3B51541130307F9D001D70DC /* BrickViewApp.swift in Sources */,
@@ -307,6 +314,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B5154533030BC4B001D70DC /* ModelLoaderServiceTests.swift in Sources */,
 				3B51544F3030B9A8001D70DC /* ModelMetadataServiceTests.swift in Sources */,
 				3B51542330307F9F001D70DC /* BrickViewTests.swift in Sources */,
 			);
