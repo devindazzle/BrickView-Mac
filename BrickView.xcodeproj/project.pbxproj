@@ -19,6 +19,10 @@
 		3B5154403030A6B7001D70DC /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51543F3030A6B7001D70DC /* Model.swift */; };
 		3B5154423030AEEC001D70DC /* FolderPickerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154413030AEEC001D70DC /* FolderPickerService.swift */; };
 		3B5154443030B0C4001D70DC /* ModelFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154433030B0C4001D70DC /* ModelFileService.swift */; };
+		3B5154463030B5AB001D70DC /* ModelMetadataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154453030B5AB001D70DC /* ModelMetadataService.swift */; };
+		3B5154493030B6E9001D70DC /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 3B5154483030B6E9001D70DC /* ZIPFoundation */; };
+		3B51544D3030B959001D70DC /* 383-knights-tournament.io in Resources */ = {isa = PBXBuildFile; fileRef = 3B51544C3030B959001D70DC /* 383-knights-tournament.io */; };
+		3B51544F3030B9A8001D70DC /* ModelMetadataServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51544E3030B9A8001D70DC /* ModelMetadataServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +59,9 @@
 		3B51543F3030A6B7001D70DC /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		3B5154413030AEEC001D70DC /* FolderPickerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerService.swift; sourceTree = "<group>"; };
 		3B5154433030B0C4001D70DC /* ModelFileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelFileService.swift; sourceTree = "<group>"; };
+		3B5154453030B5AB001D70DC /* ModelMetadataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelMetadataService.swift; sourceTree = "<group>"; };
+		3B51544C3030B959001D70DC /* 383-knights-tournament.io */ = {isa = PBXFileReference; lastKnownFileType = file; path = "383-knights-tournament.io"; sourceTree = "<group>"; };
+		3B51544E3030B9A8001D70DC /* ModelMetadataServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelMetadataServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B5154493030B6E9001D70DC /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -115,6 +123,7 @@
 				3B51543B3030A022001D70DC /* WindowConfigurator.swift */,
 				3B5154413030AEEC001D70DC /* FolderPickerService.swift */,
 				3B5154433030B0C4001D70DC /* ModelFileService.swift */,
+				3B5154453030B5AB001D70DC /* ModelMetadataService.swift */,
 			);
 			path = BrickView;
 			sourceTree = "<group>";
@@ -130,7 +139,9 @@
 		3B51542130307F9F001D70DC /* BrickViewTests */ = {
 			isa = PBXGroup;
 			children = (
+				3B51544C3030B959001D70DC /* 383-knights-tournament.io */,
 				3B51542230307F9F001D70DC /* BrickViewTests.swift */,
+				3B51544E3030B9A8001D70DC /* ModelMetadataServiceTests.swift */,
 			);
 			path = BrickViewTests;
 			sourceTree = "<group>";
@@ -160,6 +171,9 @@
 			dependencies = (
 			);
 			name = BrickView;
+			packageProductDependencies = (
+				3B5154483030B6E9001D70DC /* ZIPFoundation */,
+			);
 			productName = BrickView;
 			productReference = 3B51540D30307F9D001D70DC /* BrickView.app */;
 			productType = "com.apple.product-type.application";
@@ -232,6 +246,9 @@
 				Base,
 			);
 			mainGroup = 3B51540430307F9D001D70DC;
+			packageReferences = (
+				3B5154473030B6E9001D70DC /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
 			productRefGroup = 3B51540E30307F9D001D70DC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -257,6 +274,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B51544D3030B959001D70DC /* 383-knights-tournament.io in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +292,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B5154463030B5AB001D70DC /* ModelMetadataService.swift in Sources */,
 				3B5154403030A6B7001D70DC /* Model.swift in Sources */,
 				3B5154443030B0C4001D70DC /* ModelFileService.swift in Sources */,
 				3B51543E3030A4D6001D70DC /* ModelCardView.swift in Sources */,
@@ -288,6 +307,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B51544F3030B9A8001D70DC /* ModelMetadataServiceTests.swift in Sources */,
 				3B51542330307F9F001D70DC /* BrickViewTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -598,6 +618,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		3B5154473030B6E9001D70DC /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			requirement = {
+				kind = exactVersion;
+				version = 0.9.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		3B5154483030B6E9001D70DC /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3B5154473030B6E9001D70DC /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 3B51540530307F9D001D70DC /* Project object */;
 }
