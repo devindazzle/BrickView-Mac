@@ -14,6 +14,11 @@
 		3B51542330307F9F001D70DC /* BrickViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51542230307F9F001D70DC /* BrickViewTests.swift */; };
 		3B51542D30307F9F001D70DC /* BrickViewUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51542C30307F9F001D70DC /* BrickViewUITests.swift */; };
 		3B51542F30307F9F001D70DC /* BrickViewUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51542E30307F9F001D70DC /* BrickViewUITestsLaunchTests.swift */; };
+		3B51543C3030A022001D70DC /* WindowConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51543B3030A022001D70DC /* WindowConfigurator.swift */; };
+		3B51543E3030A4D6001D70DC /* ModelCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51543D3030A4D6001D70DC /* ModelCardView.swift */; };
+		3B5154403030A6B7001D70DC /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51543F3030A6B7001D70DC /* Model.swift */; };
+		3B5154423030AEEC001D70DC /* FolderPickerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154413030AEEC001D70DC /* FolderPickerService.swift */; };
+		3B5154443030B0C4001D70DC /* ModelFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154433030B0C4001D70DC /* ModelFileService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +50,11 @@
 		3B51542830307F9F001D70DC /* BrickViewUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BrickViewUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B51542C30307F9F001D70DC /* BrickViewUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrickViewUITests.swift; sourceTree = "<group>"; };
 		3B51542E30307F9F001D70DC /* BrickViewUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrickViewUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		3B51543B3030A022001D70DC /* WindowConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowConfigurator.swift; sourceTree = "<group>"; };
+		3B51543D3030A4D6001D70DC /* ModelCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelCardView.swift; sourceTree = "<group>"; };
+		3B51543F3030A6B7001D70DC /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		3B5154413030AEEC001D70DC /* FolderPickerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderPickerService.swift; sourceTree = "<group>"; };
+		3B5154433030B0C4001D70DC /* ModelFileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelFileService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,11 +105,16 @@
 		3B51540F30307F9D001D70DC /* BrickView */ = {
 			isa = PBXGroup;
 			children = (
-				3B51541030307F9D001D70DC /* BrickViewApp.swift */,
-				3B51541230307F9D001D70DC /* ContentView.swift */,
 				3B51541430307F9F001D70DC /* Assets.xcassets */,
 				3B51541930307F9F001D70DC /* BrickView.entitlements */,
+				3B51541030307F9D001D70DC /* BrickViewApp.swift */,
+				3B51541230307F9D001D70DC /* ContentView.swift */,
+				3B51543F3030A6B7001D70DC /* Model.swift */,
+				3B51543D3030A4D6001D70DC /* ModelCardView.swift */,
 				3B51541630307F9F001D70DC /* Preview Content */,
+				3B51543B3030A022001D70DC /* WindowConfigurator.swift */,
+				3B5154413030AEEC001D70DC /* FolderPickerService.swift */,
+				3B5154433030B0C4001D70DC /* ModelFileService.swift */,
 			);
 			path = BrickView;
 			sourceTree = "<group>";
@@ -259,8 +274,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B5154403030A6B7001D70DC /* Model.swift in Sources */,
+				3B5154443030B0C4001D70DC /* ModelFileService.swift in Sources */,
+				3B51543E3030A4D6001D70DC /* ModelCardView.swift in Sources */,
+				3B51543C3030A022001D70DC /* WindowConfigurator.swift in Sources */,
 				3B51541330307F9D001D70DC /* ContentView.swift in Sources */,
 				3B51541130307F9D001D70DC /* BrickViewApp.swift in Sources */,
+				3B5154423030AEEC001D70DC /* FolderPickerService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
