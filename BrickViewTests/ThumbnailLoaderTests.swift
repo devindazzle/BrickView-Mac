@@ -753,4 +753,167 @@ final class ThumbnailLoaderTests: XCTestCase {
             """
         )
     }
+
+    func testThumbnailLoaderLimitsConcurrentLoads() async throws {
+        let bundle = Bundle(for: ThumbnailLoaderTests.self)
+
+        let sourceURL = try XCTUnwrap(
+            bundle.url(
+                forResource: "383-knights-tournament",
+                withExtension: "io"
+            )
+        )
+
+        let temporaryDirectoryURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent(
+                UUID().uuidString,
+                isDirectory: true
+            )
+
+        try FileManager.default.createDirectory(
+            at: temporaryDirectoryURL,
+            withIntermediateDirectories: true
+        )
+
+        defer {
+            try? FileManager.default.removeItem(
+                at: temporaryDirectoryURL
+            )
+        }
+
+        let fileURLs = (0..<8).map { index in
+            temporaryDirectoryURL
+                .appendingPathComponent(
+                    "model-\(index).io"
+                )
+        }
+
+        for fileURL in fileURLs {
+            try FileManager.default.copyItem(
+                at: sourceURL,
+                to: fileURL
+            )
+        }
+
+        let thumbnailData = try XCTUnwrap(
+            try ModelThumbnailService().thumbnailData(
+                for: sourceURL
+            )
+        )
+
+        let counter = ConcurrencyCounter(
+            targetActiveLoads: 4
+        )
+
+        let allInitialLoadsStarted = XCTestExpectation(
+            description: "Four loads became active"
+        )
+
+        counter.initialLoadsExpectation = allInitialLoadsStarted
+
+        let releaseLoads = DispatchSemaphore(
+            value: 0
+        )
+
+        let thumbnailDataLoader: @Sendable (URL) throws -> Data? = { _ in
+            counter.increment()
+
+            releaseLoads.wait()
+
+            counter.decrement()
+
+            return thumbnailData
+        }
+
+        let loader = ThumbnailLoader(
+            maximumConcurrentLoads: 4,
+            thumbnailDataLoader: thumbnailDataLoader
+        )
+
+        let loadTasks = fileURLs.map { fileURL in
+            Task {
+                try await loader.load(
+                    for: fileURL,
+                    size: CGSize(
+                        width: 360,
+                        height: 220
+                    )
+                )
+            }
+        }
+
+        wait(
+            for: [
+                allInitialLoadsStarted
+            ],
+            timeout: 2.0
+        )
+
+        XCTAssertEqual(
+            counter.maximumActiveLoads,
+            4,
+            "Expected at most four concurrent thumbnail loads"
+        )
+
+        let waitingLoadCount = await loader.waitingLoadCount()
+
+        XCTAssertEqual(
+            waitingLoadCount,
+            4,
+            "Expected the remaining four loads to wait"
+        )
+
+        for _ in 0..<8 {
+            releaseLoads.signal()
+        }
+
+        for loadTask in loadTasks {
+            _ = try? await loadTask.value
+        }
+
+        XCTAssertEqual(
+            counter.maximumActiveLoads,
+            4,
+            "Expected the loader to never exceed four concurrent loads"
+        )
+    }
+}
+
+private final class ConcurrencyCounter: @unchecked Sendable {
+    private let lock = NSLock()
+    private let targetActiveLoads: Int
+    private var activeLoads: Int = 0
+    private(set) var maximumActiveLoads: Int = 0
+    var initialLoadsExpectation: XCTestExpectation?
+
+    init(targetActiveLoads: Int) {
+        self.targetActiveLoads = targetActiveLoads
+    }
+
+    func increment() {
+        lock.lock()
+
+        activeLoads += 1
+
+        if activeLoads > maximumActiveLoads {
+            maximumActiveLoads = activeLoads
+        }
+
+        let shouldFulfillExpectation =
+            activeLoads == targetActiveLoads
+
+        let expectation = initialLoadsExpectation
+
+        lock.unlock()
+
+        if shouldFulfillExpectation {
+            expectation?.fulfill()
+        }
+    }
+
+    func decrement() {
+        lock.lock()
+        activeLoads -= 1
+        lock.unlock()
+    }
 }
