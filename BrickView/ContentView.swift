@@ -30,6 +30,7 @@ struct ContentView: View {
     private let folderBookmarkService = FolderBookmarkService()
     private let modelLoaderService = ModelLoaderService()
     private let modelSortingService = ModelSortingService()
+    private let modelFilterService = ModelFilterService()
 
     @State private var selectedFolder: URL?
     @State private var models: [Model] = []
@@ -37,10 +38,18 @@ struct ContentView: View {
     @State private var folderAccessSession: FolderAccessSession?
     @State private var sortOption: ModelSortOption = .modificationDate
     @State private var sortOrder: ModelSortOrder = .descending
+    @State private var searchText: String = ""
+
+    private var filteredModels: [Model] {
+        modelFilterService.filter(
+            models,
+            matching: searchText
+        )
+    }
 
     private var sortedModels: [Model] {
         modelSortingService.sort(
-            models,
+            filteredModels,
             by: sortOption,
             order: sortOrder
         )
@@ -98,7 +107,7 @@ struct ContentView: View {
             Divider()
 
             HStack {
-                TextField("Search models...", text: .constant(""))
+                TextField("Search models...", text: $searchText)
                     .textFieldStyle(.roundedBorder)
                     .frame(maxWidth: 360)
 
@@ -225,7 +234,7 @@ struct ContentView: View {
 
             VStack(spacing: 0) {
                 HStack {
-                    Text("\(models.count) models")
+                    Text("\(sortedModels.count) models")
                         .font(.headline)
 
                     Spacer()
