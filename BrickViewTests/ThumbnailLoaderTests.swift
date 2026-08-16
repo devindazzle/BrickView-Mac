@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import AppKit
+import CoreGraphics
 @testable import BrickView
 
 final class ThumbnailLoaderTests: XCTestCase {
@@ -36,8 +36,15 @@ final class ThumbnailLoaderTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(image.size.width, 360)
-        XCTAssertEqual(image.size.height, 220)
+        XCTAssertEqual(
+            image.width,
+            360
+        )
+
+        XCTAssertEqual(
+            image.height,
+            220
+        )
     }
 
     func testDifferentThumbnailSizesProduceDifferentImageSizes() async throws {
@@ -52,20 +59,24 @@ final class ThumbnailLoaderTests: XCTestCase {
 
         let loader = ThumbnailLoader()
 
+        let firstSize = CGSize(
+            width: 360,
+            height: 220
+        )
+
+        let secondSize = CGSize(
+            width: 720,
+            height: 440
+        )
+
         let firstResult = try await loader.load(
             for: fileURL,
-            size: CGSize(
-                width: 360,
-                height: 220
-            )
+            size: firstSize
         )
 
         let secondResult = try await loader.load(
             for: fileURL,
-            size: CGSize(
-                width: 720,
-                height: 440
-            )
+            size: secondSize
         )
 
         guard case .loaded(let firstImage) = firstResult else {
@@ -78,11 +89,25 @@ final class ThumbnailLoaderTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(firstImage.size.width, 360)
-        XCTAssertEqual(firstImage.size.height, 220)
+        XCTAssertEqual(
+            CGFloat(firstImage.width),
+            firstSize.width
+        )
 
-        XCTAssertEqual(secondImage.size.width, 720)
-        XCTAssertEqual(secondImage.size.height, 440)
+        XCTAssertEqual(
+            CGFloat(firstImage.height),
+            firstSize.height
+        )
+
+        XCTAssertEqual(
+            CGFloat(secondImage.width),
+            secondSize.width
+        )
+
+        XCTAssertEqual(
+            CGFloat(secondImage.height),
+            secondSize.height
+        )
     }
 
     func testCacheIsInvalidatedWhenFileModificationDateChanges() async throws {
@@ -149,7 +174,7 @@ final class ThumbnailLoaderTests: XCTestCase {
 
         XCTAssertTrue(
             firstImage === cachedImage,
-            "Expected the second load to use the cached image"
+            "Expected the second load to use the cached CGImage"
         )
 
         let originalModificationDate = try XCTUnwrap(
@@ -158,7 +183,8 @@ final class ThumbnailLoaderTests: XCTestCase {
             )[.modificationDate] as? Date
         )
 
-        let newModificationDate = originalModificationDate.addingTimeInterval(60)
+        let newModificationDate = originalModificationDate
+            .addingTimeInterval(60)
 
         try FileManager.default.setAttributes(
             [
@@ -191,7 +217,7 @@ final class ThumbnailLoaderTests: XCTestCase {
 
         XCTAssertFalse(
             firstImage === reloadedImage,
-            "Expected a new image after the file modification date changed"
+            "Expected a new CGImage after the file modification date changed"
         )
     }
 
@@ -239,7 +265,7 @@ final class ThumbnailLoaderTests: XCTestCase {
 
         XCTAssertTrue(
             firstImage === cachedImage,
-            "Expected the second load to use the cached image"
+            "Expected the second load to use the cached CGImage"
         )
 
         let resizedResult = try await loader.load(
@@ -254,16 +280,16 @@ final class ThumbnailLoaderTests: XCTestCase {
 
         XCTAssertFalse(
             firstImage === resizedImage,
-            "Expected a new image when the thumbnail size changed"
+            "Expected a new CGImage when the thumbnail size changed"
         )
 
         XCTAssertEqual(
-            resizedImage.size.width,
+            CGFloat(resizedImage.width),
             secondSize.width
         )
 
         XCTAssertEqual(
-            resizedImage.size.height,
+            CGFloat(resizedImage.height),
             secondSize.height
         )
     }
@@ -499,10 +525,13 @@ final class ThumbnailLoaderTests: XCTestCase {
 
         secondLoadTask.cancel()
 
-        var waitingLoadCountAfterCancellation = await loader.waitingLoadCount()
+        var waitingLoadCountAfterCancellation =
+            await loader.waitingLoadCount()
+
         var remainingAttempts = 1000
 
-        while waitingLoadCountAfterCancellation != 0 && remainingAttempts > 0 {
+        while waitingLoadCountAfterCancellation != 0 &&
+                remainingAttempts > 0 {
             await Task.yield()
 
             waitingLoadCountAfterCancellation =
@@ -699,12 +728,12 @@ final class ThumbnailLoaderTests: XCTestCase {
             }
 
             XCTAssertEqual(
-                image.size.width,
+                CGFloat(image.width),
                 size.width
             )
 
             XCTAssertEqual(
-                image.size.height,
+                CGFloat(image.height),
                 size.height
             )
         }
@@ -722,195 +751,6 @@ final class ThumbnailLoaderTests: XCTestCase {
               maximum: \(maximumDuration) seconds
               average: \(averageDuration) seconds
             """
-        )
-    }
-
-    func testCGImageIsLoadedAtRequestedSize() async throws {
-        let bundle = Bundle(for: ThumbnailLoaderTests.self)
-
-        let fileURL = try XCTUnwrap(
-            bundle.url(
-                forResource: "383-knights-tournament",
-                withExtension: "io"
-            )
-        )
-
-        let loader = ThumbnailLoader()
-
-        let result = try await loader.loadCGImage(
-            for: fileURL,
-            size: CGSize(
-                width: 360,
-                height: 220
-            )
-        )
-
-        guard case .loaded(let image) = result else {
-            XCTFail("Expected a loaded CGImage")
-            return
-        }
-
-        XCTAssertEqual(
-            image.width,
-            360
-        )
-
-        XCTAssertEqual(
-            image.height,
-            220
-        )
-    }
-
-    func testCGImageUsesCache() async throws {
-        let bundle = Bundle(for: ThumbnailLoaderTests.self)
-
-        let fileURL = try XCTUnwrap(
-            bundle.url(
-                forResource: "383-knights-tournament",
-                withExtension: "io"
-            )
-        )
-
-        let loader = ThumbnailLoader()
-
-        let size = CGSize(
-            width: 360,
-            height: 220
-        )
-
-        let firstResult = try await loader.loadCGImage(
-            for: fileURL,
-            size: size
-        )
-
-        guard case .loaded(let firstImage) = firstResult else {
-            XCTFail("Expected the first CGImage to be loaded")
-            return
-        }
-
-        let secondResult = try await loader.loadCGImage(
-            for: fileURL,
-            size: size
-        )
-
-        guard case .loaded(let secondImage) = secondResult else {
-            XCTFail("Expected the cached CGImage to be loaded")
-            return
-        }
-
-        XCTAssertTrue(
-            firstImage === secondImage,
-            "Expected the second load to use the cached CGImage"
-        )
-    }
-
-    func testCGImageCacheIsInvalidatedWhenFileModificationDateChanges() async throws {
-        let bundle = Bundle(for: ThumbnailLoaderTests.self)
-
-        let sourceURL = try XCTUnwrap(
-            bundle.url(
-                forResource: "383-knights-tournament",
-                withExtension: "io"
-            )
-        )
-
-        let temporaryDirectoryURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent(
-                UUID().uuidString,
-                isDirectory: true
-            )
-
-        try FileManager.default.createDirectory(
-            at: temporaryDirectoryURL,
-            withIntermediateDirectories: true
-        )
-
-        defer {
-            try? FileManager.default.removeItem(
-                at: temporaryDirectoryURL
-            )
-        }
-
-        let testFileURL = temporaryDirectoryURL
-            .appendingPathComponent("test-model.io")
-
-        try FileManager.default.copyItem(
-            at: sourceURL,
-            to: testFileURL
-        )
-
-        let loader = ThumbnailLoader()
-
-        let size = CGSize(
-            width: 360,
-            height: 220
-        )
-
-        let firstResult = try await loader.loadCGImage(
-            for: testFileURL,
-            size: size
-        )
-
-        guard case .loaded(let firstImage) = firstResult else {
-            XCTFail("Expected the first CGImage to be loaded")
-            return
-        }
-
-        let cachedResult = try await loader.loadCGImage(
-            for: testFileURL,
-            size: size
-        )
-
-        guard case .loaded(let cachedImage) = cachedResult else {
-            XCTFail("Expected the cached CGImage to be loaded")
-            return
-        }
-
-        XCTAssertTrue(
-            firstImage === cachedImage,
-            "Expected the second load to use the cached CGImage"
-        )
-
-        let originalModificationDate = try XCTUnwrap(
-            FileManager.default.attributesOfItem(
-                atPath: testFileURL.path
-            )[.modificationDate] as? Date
-        )
-
-        let newModificationDate = originalModificationDate.addingTimeInterval(60)
-
-        try FileManager.default.setAttributes(
-            [
-                .modificationDate: newModificationDate
-            ],
-            ofItemAtPath: testFileURL.path
-        )
-
-        let updatedModificationDate = try XCTUnwrap(
-            FileManager.default.attributesOfItem(
-                atPath: testFileURL.path
-            )[.modificationDate] as? Date
-        )
-
-        XCTAssertNotEqual(
-            originalModificationDate,
-            updatedModificationDate,
-            "Expected the file modification date to change"
-        )
-
-        let reloadedResult = try await loader.loadCGImage(
-            for: testFileURL,
-            size: size
-        )
-
-        guard case .loaded(let reloadedImage) = reloadedResult else {
-            XCTFail("Expected the CGImage to be reloaded")
-            return
-        }
-
-        XCTAssertFalse(
-            firstImage === reloadedImage,
-            "Expected a new CGImage after the file modification date changed"
         )
     }
 }

@@ -8,15 +8,14 @@
 //
 //  Purpose:
 //  Coordinates thumbnail loading with a limited number of
-//  simultaneous loads, priority ordering, and caching of
-//  resized thumbnails.
+//  simultaneous loads, priority ordering, cancellation,
+//  and caching of resized CGImage thumbnails.
 //
 //  ModelThumbnailService remains responsible for reading
 //  thumbnail data from .io files.
 //
 
 import Foundation
-import AppKit
 import ImageIO
 import CoreGraphics
 
@@ -34,8 +33,7 @@ actor ThumbnailLoader {
     private var waitingRequests: [UUID: ThumbnailWaiter] = [:]
     private var waitingPriorities: [UUID: ThumbnailPriority] = [:]
     private var waitingOrder: [UUID] = []
-    private var cache: [ThumbnailCacheKey: NSImage] = [:]
-    private var cgImageCache: [ThumbnailCacheKey: CGImage] = [:]
+    private var cache: [ThumbnailCacheKey: CGImage] = [:]
 
     init(
         maximumConcurrentLoads: Int = 4,
@@ -56,92 +54,13 @@ actor ThumbnailLoader {
         for modelURL: URL,
         size: CGSize,
         priority: ThumbnailPriority = .normal
-    ) async throws -> ThumbnailLoadResult {
-        let cacheKey = try thumbnailCacheKey(
-            for: modelURL,
-            size: size
-        )
-
-        if let cachedImage = cache[cacheKey] {
-            return ThumbnailLoadResult.loaded(cachedImage)
-        }
-
-        try await waitForAvailableSlot(
-            priority: priority
-        )
-
-        defer {
-            releaseSlot()
-        }
-
-        try Task.checkCancellation()
-
-        if let cachedImage = cache[cacheKey] {
-            return ThumbnailLoadResult.loaded(cachedImage)
-        }
-
-        let thumbnailDataLoader = self.thumbnailDataLoader
-
-        let loadingTask = Task.detached(priority: .userInitiated) {
-            try Task.checkCancellation()
-
-            let thumbnailData = try thumbnailDataLoader(
-                modelURL
-            )
-
-            try Task.checkCancellation()
-
-            guard let thumbnailData else {
-                return ThumbnailLoadResult.noThumbnail
-            }
-
-            guard let image = NSImage(data: thumbnailData) else {
-                return ThumbnailLoadResult.error
-            }
-
-            try Task.checkCancellation()
-
-            guard let resizedImage = Self.resize(
-                image,
-                to: size
-            ) else {
-                return ThumbnailLoadResult.error
-            }
-
-            try Task.checkCancellation()
-
-            return ThumbnailLoadResult.loaded(resizedImage)
-        }
-
-        let result = try await withTaskCancellationHandler(
-            operation: {
-                try await loadingTask.value
-            },
-            onCancel: {
-                loadingTask.cancel()
-            }
-        )
-
-        try Task.checkCancellation()
-
-        if case .loaded(let image) = result {
-            cache[cacheKey] = image
-        }
-
-        return result
-    }
-
-    func loadCGImage(
-        for modelURL: URL,
-        size: CGSize,
-        priority: ThumbnailPriority = .normal
     ) async throws -> ThumbnailCGImageLoadResult {
         let cacheKey = try thumbnailCacheKey(
             for: modelURL,
             size: size
         )
 
-        if let cachedImage = cgImageCache[cacheKey] {
+        if let cachedImage = cache[cacheKey] {
             return ThumbnailCGImageLoadResult.loaded(cachedImage)
         }
 
@@ -155,7 +74,7 @@ actor ThumbnailLoader {
 
         try Task.checkCancellation()
 
-        if let cachedImage = cgImageCache[cacheKey] {
+        if let cachedImage = cache[cacheKey] {
             return ThumbnailCGImageLoadResult.loaded(cachedImage)
         }
 
@@ -217,7 +136,7 @@ actor ThumbnailLoader {
         try Task.checkCancellation()
 
         if case .loaded(let image) = result {
-            cgImageCache[cacheKey] = image
+            cache[cacheKey] = image
         }
 
         return result
@@ -354,38 +273,6 @@ actor ThumbnailLoader {
     }
 
     private static func resize(
-        _ image: NSImage,
-        to size: CGSize
-    ) -> NSImage? {
-        guard size.width > 0, size.height > 0 else {
-            return nil
-        }
-
-        let resizedImage = NSImage(size: size)
-
-        resizedImage.lockFocus()
-
-        defer {
-            resizedImage.unlockFocus()
-        }
-
-        image.draw(
-            in: NSRect(
-                origin: .zero,
-                size: size
-            ),
-            from: NSRect(
-                origin: .zero,
-                size: image.size
-            ),
-            operation: .copy,
-            fraction: 1.0
-        )
-
-        return resizedImage
-    }
-
-    private static func resize(
         _ image: CGImage,
         to size: CGSize
     ) -> CGImage? {
@@ -465,12 +352,6 @@ private struct ThumbnailCacheKey: Hashable {
     let modificationDate: Date?
     let width: CGFloat
     let height: CGFloat
-}
-
-enum ThumbnailLoadResult {
-    case loaded(NSImage)
-    case noThumbnail
-    case error
 }
 
 enum ThumbnailCGImageLoadResult {

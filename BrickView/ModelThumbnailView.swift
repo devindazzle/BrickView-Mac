@@ -13,9 +13,6 @@
 //  ThumbnailLoader and provides explicit fallback states
 //  for missing thumbnails and loading errors.
 //
-//  This diagnostic version uses CGImage rendering to compare
-//  UI responsiveness with the NSImage-based pipeline.
-//
 
 import SwiftUI
 import AppKit
@@ -68,7 +65,7 @@ struct ModelThumbnailView: View {
         state = .loading
 
         do {
-            let result = try await thumbnailLoader.loadCGImage(
+            let result = try await thumbnailLoader.load(
                 for: model.id,
                 size: ThumbnailConfiguration.displaySize,
                 priority: .high
