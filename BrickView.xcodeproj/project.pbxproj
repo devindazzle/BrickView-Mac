@@ -34,6 +34,8 @@
 		3BD32F2E3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io in Resources */ = {isa = PBXBuildFile; fileRef = 3BD32F2C3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io */; };
 		3BD32F303031BBCF00676D66 /* ThumbnailConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F2F3031BBCF00676D66 /* ThumbnailConfiguration.swift */; };
 		3BD32F323031BFDD00676D66 /* ThumbnailLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F313031BFDD00676D66 /* ThumbnailLoaderTests.swift */; };
+		3BD32F343031E44D00676D66 /* FolderBookmarkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F333031E44D00676D66 /* FolderBookmarkService.swift */; };
+		3BD32F363031E97F00676D66 /* FolderAccessSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F353031E97F00676D66 /* FolderAccessSession.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +86,8 @@
 		3BD32F2C3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io */ = {isa = PBXFileReference; lastKnownFileType = file; name = "383-knights-tournament-no-thumbnail.io"; path = "../../../../Dropbox/LEGO/Brick Link Studio/Test folder/383-knights-tournament-no-thumbnail.io"; sourceTree = "<group>"; };
 		3BD32F2F3031BBCF00676D66 /* ThumbnailConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailConfiguration.swift; sourceTree = "<group>"; };
 		3BD32F313031BFDD00676D66 /* ThumbnailLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailLoaderTests.swift; sourceTree = "<group>"; };
+		3BD32F333031E44D00676D66 /* FolderBookmarkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderBookmarkService.swift; sourceTree = "<group>"; };
+		3BD32F353031E97F00676D66 /* FolderAccessSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderAccessSession.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +143,8 @@
 				3B51541930307F9F001D70DC /* BrickView.entitlements */,
 				3B51541030307F9D001D70DC /* BrickViewApp.swift */,
 				3B51541230307F9D001D70DC /* ContentView.swift */,
+				3BD32F353031E97F00676D66 /* FolderAccessSession.swift */,
+				3BD32F333031E44D00676D66 /* FolderBookmarkService.swift */,
 				3B5154413030AEEC001D70DC /* FolderPickerService.swift */,
 				3B51543F3030A6B7001D70DC /* Model.swift */,
 				3B51543D3030A4D6001D70DC /* ModelCardView.swift */,
@@ -328,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3B5154463030B5AB001D70DC /* ModelMetadataService.swift in Sources */,
+				3BD32F343031E44D00676D66 /* FolderBookmarkService.swift in Sources */,
 				3B5154403030A6B7001D70DC /* Model.swift in Sources */,
 				3B5154613030C75D001D70DC /* ModelThumbnailService.swift in Sources */,
 				3BD32F2A3031B81300676D66 /* ThumbnailLoader.swift in Sources */,
@@ -340,6 +347,7 @@
 				3B51541330307F9D001D70DC /* ContentView.swift in Sources */,
 				3B51541130307F9D001D70DC /* BrickViewApp.swift in Sources */,
 				3B5154423030AEEC001D70DC /* FolderPickerService.swift in Sources */,
+				3BD32F363031E97F00676D66 /* FolderAccessSession.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

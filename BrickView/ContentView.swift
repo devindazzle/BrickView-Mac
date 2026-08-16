@@ -27,11 +27,13 @@ struct ContentView: View {
     ]
 
     private let folderPickerService = FolderPickerService()
+    private let folderBookmarkService = FolderBookmarkService()
     private let modelLoaderService = ModelLoaderService()
 
     @State private var selectedFolder: URL?
     @State private var models: [Model] = []
     @State private var loadingError: String?
+    @State private var folderAccessSession: FolderAccessSession?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -60,21 +62,19 @@ struct ContentView: View {
 
                 Button("Select folder") {
                     if let folder = folderPickerService.selectFolder() {
-                        selectedFolder = folder
-
-                        Task {
-                            do {
-                                let loadedModels = try await modelLoaderService.loadModels(
-                                    from: folder
-                                )
-
-                                models = loadedModels
-                                loadingError = nil
-                            } catch {
-                                models = []
-                                loadingError = error.localizedDescription
-                            }
+                        guard let accessSession = FolderAccessSession(folder: folder) else {
+                            selectedFolder = nil
+                            models = []
+                            loadingError = "The selected folder could not be accessed."
+                            return
                         }
+
+                        folderAccessSession = accessSession
+                        selectedFolder = accessSession.folder
+
+                        try? folderBookmarkService.saveBookmark(for: accessSession.folder)
+
+                        loadModels(from: accessSession.folder)
                     }
                 }
 
@@ -170,6 +170,30 @@ struct ContentView: View {
         }
         .background {
             WindowConfigurator()
+        }
+        .task {
+            if let restoredFolder = folderBookmarkService.restoreFolder(),
+               let accessSession = FolderAccessSession(folder: restoredFolder) {
+                folderAccessSession = accessSession
+                selectedFolder = accessSession.folder
+                loadModels(from: accessSession.folder)
+            }
+        }
+    }
+
+    private func loadModels(from folder: URL) {
+        Task {
+            do {
+                let loadedModels = try await modelLoaderService.loadModels(
+                    from: folder
+                )
+
+                models = loadedModels
+                loadingError = nil
+            } catch {
+                models = []
+                loadingError = error.localizedDescription
+            }
         }
     }
 }
