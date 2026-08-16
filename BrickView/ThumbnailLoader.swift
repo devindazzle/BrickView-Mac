@@ -21,12 +21,25 @@ actor ThumbnailLoader {
     static let shared = ThumbnailLoader()
 
     private let maximumConcurrentLoads: Int
+    private let thumbnailDataLoader: @Sendable (URL) throws -> Data?
     private var activeLoads: Int = 0
-    private var waitingContinuations: [CheckedContinuation<Void, Never>] = []
+    private var waitingRequests: [UUID: ThumbnailWaiter] = [:]
+    private var waitingOrder: [UUID] = []
     private var cache: [ThumbnailCacheKey: NSImage] = [:]
 
-    init(maximumConcurrentLoads: Int = 4) {
+    init(
+        maximumConcurrentLoads: Int = 4,
+        thumbnailDataLoader: @escaping @Sendable (URL) throws -> Data? = { modelURL in
+            let service = ModelThumbnailService()
+            return try service.thumbnailData(for: modelURL)
+        }
+    ) {
         self.maximumConcurrentLoads = maximumConcurrentLoads
+        self.thumbnailDataLoader = thumbnailDataLoader
+    }
+
+    func waitingLoadCount() -> Int {
+        return waitingRequests.count
     }
 
     func load(
@@ -42,7 +55,7 @@ actor ThumbnailLoader {
             return ThumbnailLoadResult.loaded(cachedImage)
         }
 
-        await waitForAvailableSlot()
+        try await waitForAvailableSlot()
 
         defer {
             releaseSlot()
@@ -54,14 +67,16 @@ actor ThumbnailLoader {
             return ThumbnailLoadResult.loaded(cachedImage)
         }
 
-        let service = ModelThumbnailService()
+        let thumbnailDataLoader = self.thumbnailDataLoader
 
-        let result = try await Task.detached(priority: .userInitiated) {
+        let loadingTask = Task.detached(priority: .userInitiated) {
             try Task.checkCancellation()
 
-            let thumbnailData = try service.thumbnailData(
-                for: modelURL
+            let thumbnailData = try thumbnailDataLoader(
+                modelURL
             )
+
+            try Task.checkCancellation()
 
             guard let thumbnailData else {
                 return ThumbnailLoadResult.noThumbnail
@@ -71,6 +86,8 @@ actor ThumbnailLoader {
                 return ThumbnailLoadResult.error
             }
 
+            try Task.checkCancellation()
+
             guard let resizedImage = Self.resize(
                 image,
                 to: size
@@ -78,8 +95,21 @@ actor ThumbnailLoader {
                 return ThumbnailLoadResult.error
             }
 
+            try Task.checkCancellation()
+
             return ThumbnailLoadResult.loaded(resizedImage)
-        }.value
+        }
+
+        let result = try await withTaskCancellationHandler(
+            operation: {
+                try await loadingTask.value
+            },
+            onCancel: {
+                loadingTask.cancel()
+            }
+        )
+
+        try Task.checkCancellation()
 
         if case .loaded(let image) = result {
             cache[cacheKey] = image
@@ -108,28 +138,67 @@ actor ThumbnailLoader {
         )
     }
 
-    private func waitForAvailableSlot() async {
+    private func waitForAvailableSlot() async throws {
         if activeLoads < maximumConcurrentLoads {
             activeLoads += 1
             return
         }
 
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            waitingContinuations.append(continuation)
-        }
+        let requestID = UUID()
+        let waiter = ThumbnailWaiter()
+
+        waitingRequests[requestID] = waiter
+        waitingOrder.append(requestID)
+
+        await withTaskCancellationHandler(
+            operation: {
+                await waiter.wait()
+            },
+            onCancel: {
+                Task {
+                    await self.cancelWaitingRequest(
+                        requestID: requestID
+                    )
+                }
+            }
+        )
+
+        try Task.checkCancellation()
 
         activeLoads += 1
+    }
+
+    private func cancelWaitingRequest(
+        requestID: UUID
+    ) {
+        guard let waiter = waitingRequests.removeValue(
+            forKey: requestID
+        ) else {
+            return
+        }
+
+        waitingOrder.removeAll {
+            $0 == requestID
+        }
+
+        waiter.cancel()
     }
 
     private func releaseSlot() {
         activeLoads -= 1
 
-        guard !waitingContinuations.isEmpty else {
+        while !waitingOrder.isEmpty {
+            let requestID = waitingOrder.removeFirst()
+
+            guard let waiter = waitingRequests.removeValue(
+                forKey: requestID
+            ) else {
+                continue
+            }
+
+            waiter.resume()
             return
         }
-
-        let continuation = waitingContinuations.removeFirst()
-        continuation.resume()
     }
 
     private static func resize(
@@ -162,6 +231,36 @@ actor ThumbnailLoader {
         )
 
         return resizedImage
+    }
+}
+
+private final class ThumbnailWaiter: @unchecked Sendable {
+    private let stream: AsyncStream<Void>
+    private let continuation: AsyncStream<Void>.Continuation
+
+    init() {
+        var capturedContinuation: AsyncStream<Void>.Continuation?
+
+        self.stream = AsyncStream<Void> { continuation in
+            capturedContinuation = continuation
+        }
+
+        self.continuation = capturedContinuation!
+    }
+
+    func wait() async {
+        for await _ in stream {
+            return
+        }
+    }
+
+    func resume() {
+        continuation.yield(())
+        continuation.finish()
+    }
+
+    func cancel() {
+        continuation.finish()
     }
 }
 
