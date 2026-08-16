@@ -32,9 +32,15 @@ struct ModelLoaderService {
                     for: modelURL
                 )
 
+                let fileAttributes = try modelFileService.attributes(
+                    for: modelURL
+                )
+
                 let model = Model(
                     url: modelURL,
                     partCount: partCount,
+                    creationDate: fileAttributes.creationDate,
+                    modificationDate: fileAttributes.modificationDate,
                     status: .valid
                 )
 

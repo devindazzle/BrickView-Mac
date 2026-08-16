@@ -29,11 +29,22 @@ struct ContentView: View {
     private let folderPickerService = FolderPickerService()
     private let folderBookmarkService = FolderBookmarkService()
     private let modelLoaderService = ModelLoaderService()
+    private let modelSortingService = ModelSortingService()
 
     @State private var selectedFolder: URL?
     @State private var models: [Model] = []
     @State private var loadingError: String?
     @State private var folderAccessSession: FolderAccessSession?
+    @State private var sortOption: ModelSortOption = .modificationDate
+    @State private var sortOrder: ModelSortOrder = .descending
+
+    private var sortedModels: [Model] {
+        modelSortingService.sort(
+            models,
+            by: sortOption,
+            order: sortOrder
+        )
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -93,18 +104,97 @@ struct ContentView: View {
 
                 Spacer()
 
-                HStack(spacing: 4) {
-                    Text("Aa")
-                        .fontWeight(.semibold)
+                Menu {
+                    Section("Sort by") {
+                        Button {
+                            sortOption = .filename
+                        } label: {
+                            HStack {
+                                Text("File name")
 
-                    Text("Modified date")
+                                Spacer()
 
-                    Text("↓")
+                                if sortOption == .filename {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+
+                        Button {
+                            sortOption = .creationDate
+                        } label: {
+                            HStack {
+                                Text("Created date")
+
+                                Spacer()
+
+                                if sortOption == .creationDate {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+
+                        Button {
+                            sortOption = .modificationDate
+                        } label: {
+                            HStack {
+                                Text("Modified date")
+
+                                Spacer()
+
+                                if sortOption == .modificationDate {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+
+                    Section("Order") {
+                        Button {
+                            sortOrder = .ascending
+                        } label: {
+                            HStack {
+                                Text("Ascending")
+
+                                Spacer()
+
+                                if sortOrder == .ascending {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+
+                        Button {
+                            sortOrder = .descending
+                        } label: {
+                            HStack {
+                                Text("Descending")
+
+                                Spacer()
+
+                                if sortOrder == .descending {
+                                    Image(systemName: "checkmark")
+                                }
+                            }
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        Text(sortOptionLabel)
+
+                        Image(
+                            systemName: sortOrder == .ascending
+                                ? "arrow.up"
+                                : "arrow.down"
+                        )
                         .foregroundColor(.accentColor)
 
-                    Image(systemName: "chevron.down")
-                        .font(.caption)
+                        Image(systemName: "chevron.down")
+                            .font(.caption)
+                    }
                 }
+                .menuStyle(.borderlessButton)
+                .fixedSize()
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
                 .background(Color(nsColor: .controlBackgroundColor))
@@ -155,7 +245,7 @@ struct ContentView: View {
                         alignment: .leading,
                         spacing: 20
                     ) {
-                        ForEach(models) { model in
+                        ForEach(sortedModels) { model in
                             ModelCardView(model: model)
                         }
                     }
@@ -178,6 +268,19 @@ struct ContentView: View {
                 selectedFolder = accessSession.folder
                 loadModels(from: accessSession.folder)
             }
+        }
+    }
+
+    private var sortOptionLabel: String {
+        switch sortOption {
+        case .filename:
+            return "File name"
+
+        case .creationDate:
+            return "Created date"
+
+        case .modificationDate:
+            return "Modified date"
         }
     }
 

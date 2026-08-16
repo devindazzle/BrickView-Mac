@@ -10,11 +10,17 @@
 //  Provides file system operations related to BrickView model files.
 //
 //  The service is responsible for discovering BrickLink Studio .io
-//  files in a selected folder. It does not manage application state,
-//  update the user interface, or parse the contents of model files.
+//  files and retrieving file system metadata. It does not manage
+//  application state, update the user interface, or parse the
+//  contents of model files.
 //
 
 import Foundation
+
+struct ModelFileAttributes {
+    let creationDate: Date?
+    let modificationDate: Date?
+}
 
 struct ModelFileService {
     func findModelFiles(in folder: URL) throws -> [URL] {
@@ -29,5 +35,19 @@ struct ModelFileService {
         return urls.filter { url in
             url.pathExtension.lowercased() == "io"
         }
+    }
+
+    func attributes(for file: URL) throws -> ModelFileAttributes {
+        let resourceValues = try file.resourceValues(
+            forKeys: [
+                .creationDateKey,
+                .contentModificationDateKey
+            ]
+        )
+
+        return ModelFileAttributes(
+            creationDate: resourceValues.creationDate,
+            modificationDate: resourceValues.contentModificationDate
+        )
     }
 }
