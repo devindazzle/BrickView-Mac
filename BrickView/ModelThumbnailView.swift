@@ -13,11 +13,13 @@
 //  ThumbnailLoader and provides explicit fallback states
 //  for missing thumbnails and loading errors.
 //
-//  Thumbnail caching will be added separately.
+//  This diagnostic version uses CGImage rendering to compare
+//  UI responsiveness with the NSImage-based pipeline.
 //
 
 import SwiftUI
 import AppKit
+import CoreGraphics
 
 struct ModelThumbnailView: View {
     let model: Model
@@ -36,9 +38,12 @@ struct ModelThumbnailView: View {
                     ProgressView()
 
                 case .loaded(let image):
-                    Image(nsImage: image)
-                        .resizable()
-                        .scaledToFit()
+                    Image(
+                        decorative: image,
+                        scale: 1.0
+                    )
+                    .resizable()
+                    .scaledToFit()
 
                 case .noThumbnail:
                     fallbackView(text: "No thumbnail")
@@ -63,9 +68,10 @@ struct ModelThumbnailView: View {
         state = .loading
 
         do {
-            let result = try await thumbnailLoader.load(
+            let result = try await thumbnailLoader.loadCGImage(
                 for: model.id,
-                size: ThumbnailConfiguration.displaySize
+                size: ThumbnailConfiguration.displaySize,
+                priority: .high
             )
 
             guard !Task.isCancelled else {
@@ -108,7 +114,7 @@ struct ModelThumbnailView: View {
 
 private enum ThumbnailState {
     case loading
-    case loaded(NSImage)
+    case loaded(CGImage)
     case noThumbnail
     case error
 }
