@@ -10,8 +10,9 @@
 //  Loads BrickView model data from a selected folder.
 //
 //  The service coordinates model file discovery and metadata
-//  extraction. It does not manage application state or update
-//  the user interface.
+//  extraction. Invalid model files are retained in the result
+//  with an invalid status so that one bad file does not prevent
+//  other models from being loaded.
 //
 
 import Foundation
@@ -26,16 +27,26 @@ struct ModelLoaderService {
         var models: [Model] = []
 
         for modelURL in modelURLs {
-            let partCount = try modelMetadataService.partCount(
-                for: modelURL
-            )
+            do {
+                let partCount = try modelMetadataService.partCount(
+                    for: modelURL
+                )
 
-            let model = Model(
-                url: modelURL,
-                partCount: partCount
-            )
+                let model = Model(
+                    url: modelURL,
+                    partCount: partCount,
+                    status: .valid
+                )
 
-            models.append(model)
+                models.append(model)
+            } catch {
+                let model = Model(
+                    url: modelURL,
+                    status: .invalid
+                )
+
+                models.append(model)
+            }
         }
 
         return models

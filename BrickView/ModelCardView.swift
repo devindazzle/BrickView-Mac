@@ -18,34 +18,39 @@
 import SwiftUI
 
 struct ModelCardView: View {
-    let filename: String
-    let partCount: Int
+    let model: Model
 
     var body: some View {
         VStack {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(nsColor: .windowBackgroundColor))
-                .frame(width: 360, height: 220)
-                .overlay {
-                    Text("Model Preview")
-                        .foregroundColor(.secondary)
-                }
+            ModelThumbnailView(model: model)
+                .frame(
+                    width: ThumbnailConfiguration.displaySize.width,
+                    height: ThumbnailConfiguration.displaySize.height
+                )
+                .background(Color(nsColor: .windowBackgroundColor))
+                .clipShape(
+                    RoundedRectangle(cornerRadius: 8)
+                )
 
-            Text(filename)
+            Text(model.filename)
                 .font(.headline)
                 .frame(
                     maxWidth: .infinity,
                     alignment: .leading
                 )
 
-            Text("\(partCount) parts")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .frame(
-                    maxWidth: .infinity,
-                    alignment: .leading
-                )
+            if let partCount = model.partCount {
+                Text("\(partCount) parts")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .leading
+                    )
+            }
         }
-        .frame(width: 360)
+        .frame(
+            width: ThumbnailConfiguration.displaySize.width
+        )
     }
 }

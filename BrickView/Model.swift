@@ -17,14 +17,25 @@
 
 import Foundation
 
+enum ModelStatus: Equatable {
+    case valid
+    case invalid
+}
+
 struct Model: Identifiable {
     let id: URL
     let filename: String
     let partCount: Int?
-    
-    init(url: URL, partCount: Int? = nil) {
+    let status: ModelStatus
+
+    init(
+        url: URL,
+        partCount: Int? = nil,
+        status: ModelStatus = .valid
+    ) {
         self.id = url
         self.filename = url.lastPathComponent
         self.partCount = partCount
+        self.status = status
     }
 }

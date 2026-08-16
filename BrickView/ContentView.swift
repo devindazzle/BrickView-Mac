@@ -156,10 +156,7 @@ struct ContentView: View {
                         spacing: 20
                     ) {
                         ForEach(models) { model in
-                            ModelCardView(
-                                filename: model.filename,
-                                partCount: model.partCount ?? 0
-                            )
+                            ModelCardView(model: model)
                         }
                     }
                     .padding()

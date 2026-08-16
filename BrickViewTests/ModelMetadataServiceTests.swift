@@ -6,6 +6,8 @@
 //
 
 import XCTest
+import ZIPFoundation
+
 @testable import BrickView
 
 final class ModelMetadataServiceTests: XCTestCase {
@@ -26,4 +28,26 @@ final class ModelMetadataServiceTests: XCTestCase {
 
         XCTAssertEqual(partCount, 232)
     }
+    
+    
+    func testIOFileContainsThumbnail() throws {
+        let bundle = Bundle(for: ModelMetadataServiceTests.self)
+
+        let fileURL = try XCTUnwrap(
+            bundle.url(
+                forResource: "383-knights-tournament",
+                withExtension: "io"
+            )
+        )
+
+        let archive = try XCTUnwrap(
+            Archive(
+                url: fileURL,
+                accessMode: .read
+            )
+        )
+
+        XCTAssertNotNil(archive["thumbnail.png"])
+    }
+    
 }
