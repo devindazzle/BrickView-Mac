@@ -19,13 +19,25 @@ import SwiftUI
 
 struct ModelCardView: View {
     let model: Model
+    let sizeDefinition: ThumbnailSizeDefinition
+
+    init(
+        model: Model,
+        sizeDefinition: ThumbnailSizeDefinition = ThumbnailConfiguration.medium
+    ) {
+        self.model = model
+        self.sizeDefinition = sizeDefinition
+    }
 
     var body: some View {
         VStack {
-            ModelThumbnailView(model: model)
+            ModelThumbnailView(
+                model: model,
+                size: sizeDefinition.thumbnailSize
+            )
                 .frame(
-                    width: ThumbnailConfiguration.displaySize.width,
-                    height: ThumbnailConfiguration.displaySize.height
+                    width: sizeDefinition.thumbnailSize.width,
+                    height: sizeDefinition.thumbnailSize.height
                 )
                 .background(Color(nsColor: .windowBackgroundColor))
                 .clipShape(
@@ -50,7 +62,7 @@ struct ModelCardView: View {
             }
         }
         .frame(
-            width: ThumbnailConfiguration.displaySize.width
+            width: sizeDefinition.cardSize.width
         )
     }
 }

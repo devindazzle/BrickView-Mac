@@ -20,10 +20,19 @@ import CoreGraphics
 
 struct ModelThumbnailView: View {
     let model: Model
+    let size: CGSize
 
     @State private var state: ThumbnailState = .loading
 
     private let thumbnailLoader = ThumbnailLoader.shared
+
+    init(
+        model: Model,
+        size: CGSize = ThumbnailConfiguration.displaySize
+    ) {
+        self.model = model
+        self.size = size
+    }
 
     var body: some View {
         Group {
@@ -67,7 +76,7 @@ struct ModelThumbnailView: View {
         do {
             let result = try await thumbnailLoader.load(
                 for: model.id,
-                size: ThumbnailConfiguration.displaySize,
+                size: size,
                 priority: .high
             )
 

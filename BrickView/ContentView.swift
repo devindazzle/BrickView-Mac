@@ -22,15 +22,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    private let columns = [
-        GridItem(.adaptive(minimum: 360, maximum: 360), spacing: 20)
-    ]
-
     private let folderPickerService = FolderPickerService()
     private let folderBookmarkService = FolderBookmarkService()
     private let modelLoaderService = ModelLoaderService()
     private let modelSortingService = ModelSortingService()
     private let modelFilterService = ModelFilterService()
+
+    private let gridSpacing: CGFloat = 20
+    private let gridPadding: CGFloat = 16
 
     @State private var selectedFolder: URL?
     @State private var models: [Model] = []
@@ -39,6 +38,20 @@ struct ContentView: View {
     @State private var sortOption: ModelSortOption = .modificationDate
     @State private var sortOrder: ModelSortOrder = .descending
     @State private var searchText: String = ""
+    @State private var gridDensity: GridDensity = .medium
+
+    private var thumbnailSizeDefinition: ThumbnailSizeDefinition {
+        switch gridDensity {
+        case .small:
+            return ThumbnailConfiguration.small
+
+        case .medium:
+            return ThumbnailConfiguration.medium
+
+        case .large:
+            return ThumbnailConfiguration.large
+        }
+    }
 
     private var filteredModels: [Model] {
         modelFilterService.filter(
@@ -209,23 +222,19 @@ struct ContentView: View {
                 .background(Color(nsColor: .controlBackgroundColor))
                 .cornerRadius(6)
 
-                HStack(spacing: 0) {
-                    Button {
-                    } label: {
-                        Image(systemName: "square.grid.2x2")
-                    }
+                Picker("Grid density", selection: $gridDensity) {
+                    Image(systemName: "square.grid.2x2")
+                        .tag(GridDensity.small)
 
-                    Button {
-                    } label: {
-                        Image(systemName: "square.grid.3x3")
-                    }
+                    Image(systemName: "square.grid.3x3")
+                        .tag(GridDensity.medium)
 
-                    Button {
-                    } label: {
-                        Image(systemName: "square.grid.4x3.fill")
-                    }
+                    Image(systemName: "square.grid.4x3.fill")
+                        .tag(GridDensity.large)
                 }
-                .buttonStyle(.bordered)
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .fixedSize()
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
@@ -248,17 +257,24 @@ struct ContentView: View {
                         .padding()
                 }
 
-                ScrollView {
-                    LazyVGrid(
-                        columns: columns,
-                        alignment: .leading,
-                        spacing: 20
-                    ) {
-                        ForEach(sortedModels) { model in
-                            ModelCardView(model: model)
+                GeometryReader { geometry in
+                    ScrollView {
+                        LazyVGrid(
+                            columns: gridColumns(
+                                for: geometry.size.width
+                            ),
+                            alignment: .leading,
+                            spacing: gridSpacing
+                        ) {
+                            ForEach(sortedModels) { model in
+                                ModelCardView(
+                                    model: model,
+                                    sizeDefinition: thumbnailSizeDefinition
+                                )
+                            }
                         }
+                        .padding(gridPadding)
                     }
-                    .padding()
                 }
             }
             .frame(
@@ -291,6 +307,32 @@ struct ContentView: View {
         case .modificationDate:
             return "Modified date"
         }
+    }
+
+    private func gridColumns(for width: CGFloat) -> [GridItem] {
+        let cardWidth = thumbnailSizeDefinition.cardSize.width
+        let availableWidth = max(
+            0,
+            width - (gridPadding * 2)
+        )
+
+        let columnCount = max(
+            1,
+            Int(
+                floor(
+                    (availableWidth + gridSpacing)
+                        / (cardWidth + gridSpacing)
+                )
+            )
+        )
+
+        return Array(
+            repeating: GridItem(
+                .fixed(cardWidth),
+                spacing: gridSpacing
+            ),
+            count: columnCount
+        )
     }
 
     private func loadModels(from folder: URL) {

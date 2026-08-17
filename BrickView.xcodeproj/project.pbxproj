@@ -41,6 +41,7 @@
 		3BD32F3C3031F5E100676D66 /* ModelSortingServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F3B3031F5E100676D66 /* ModelSortingServiceTests.swift */; };
 		3BD32F3E3031FBDA00676D66 /* ModelFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F3D3031FBDA00676D66 /* ModelFilterService.swift */; };
 		3BD32F403031FC9300676D66 /* ModelFilterServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F3F3031FC9300676D66 /* ModelFilterServiceTests.swift */; };
+		3BD32F423032008500676D66 /* GridDensity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F413032008500676D66 /* GridDensity.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,7 @@
 		3BD32F3B3031F5E100676D66 /* ModelSortingServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelSortingServiceTests.swift; sourceTree = "<group>"; };
 		3BD32F3D3031FBDA00676D66 /* ModelFilterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelFilterService.swift; sourceTree = "<group>"; };
 		3BD32F3F3031FC9300676D66 /* ModelFilterServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelFilterServiceTests.swift; sourceTree = "<group>"; };
+		3BD32F413032008500676D66 /* GridDensity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridDensity.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -170,6 +172,7 @@
 				3BD32F2F3031BBCF00676D66 /* ThumbnailConfiguration.swift */,
 				3BD32F293031B81300676D66 /* ThumbnailLoader.swift */,
 				3B51543B3030A022001D70DC /* WindowConfigurator.swift */,
+				3BD32F413032008500676D66 /* GridDensity.swift */,
 			);
 			path = BrickView;
 			sourceTree = "<group>";
@@ -352,6 +355,7 @@
 				3BD32F343031E44D00676D66 /* FolderBookmarkService.swift in Sources */,
 				3BD32F383031F44300676D66 /* ModelSortOption.swift in Sources */,
 				3B5154403030A6B7001D70DC /* Model.swift in Sources */,
+				3BD32F423032008500676D66 /* GridDensity.swift in Sources */,
 				3B5154613030C75D001D70DC /* ModelThumbnailService.swift in Sources */,
 				3BD32F2A3031B81300676D66 /* ThumbnailLoader.swift in Sources */,
 				3BD32F303031BBCF00676D66 /* ThumbnailConfiguration.swift in Sources */,
