@@ -35,14 +35,14 @@ struct ModelCardView: View {
                 model: model,
                 size: sizeDefinition.thumbnailSize
             )
-                .frame(
-                    width: sizeDefinition.thumbnailSize.width,
-                    height: sizeDefinition.thumbnailSize.height
-                )
-                .background(Color(nsColor: .windowBackgroundColor))
-                .clipShape(
-                    RoundedRectangle(cornerRadius: 8)
-                )
+            .frame(
+                width: sizeDefinition.thumbnailSize.width,
+                height: sizeDefinition.thumbnailSize.height
+            )
+            .background(Color(nsColor: .windowBackgroundColor))
+            .clipShape(
+                RoundedRectangle(cornerRadius: 8)
+            )
 
             Text(model.filename)
                 .font(.headline)
@@ -62,7 +62,9 @@ struct ModelCardView: View {
             }
         }
         .frame(
-            width: sizeDefinition.cardSize.width
+            width: sizeDefinition.cardSize.width,
+            height: sizeDefinition.cardSize.height,
+            alignment: .topLeading
         )
     }
 }

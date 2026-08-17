@@ -310,7 +310,7 @@ struct ContentView: View {
     }
 
     private func gridColumns(for width: CGFloat) -> [GridItem] {
-        let cardWidth = thumbnailSizeDefinition.cardSize.width
+        let itemWidth = thumbnailSizeDefinition.itemSize.width
         let availableWidth = max(
             0,
             width - (gridPadding * 2)
@@ -321,14 +321,14 @@ struct ContentView: View {
             Int(
                 floor(
                     (availableWidth + gridSpacing)
-                        / (cardWidth + gridSpacing)
+                        / (itemWidth + gridSpacing)
                 )
             )
         )
 
         return Array(
             repeating: GridItem(
-                .fixed(cardWidth),
+                .fixed(itemWidth),
                 spacing: gridSpacing
             ),
             count: columnCount
