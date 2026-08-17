@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import ZipArchive
+import SwiftZip
 
 @testable import BrickView
 
@@ -24,9 +24,14 @@ final class ModelMetadataServiceTests: XCTestCase {
 
         let service = ModelMetadataService()
 
-        let partCount = try service.partCount(for: fileURL)
+        let partCount = try service.partCount(
+            for: fileURL
+        )
 
-        XCTAssertEqual(partCount, 232)
+        XCTAssertEqual(
+            partCount,
+            232
+        )
     }
 
     func testIOFileContainsThumbnail() throws {
@@ -39,47 +44,67 @@ final class ModelMetadataServiceTests: XCTestCase {
             )
         )
 
-        let temporaryDirectory = FileManager.default.temporaryDirectory
-            .appendingPathComponent(
-                "BrickView-Metadata-Test-\(UUID().uuidString)",
-                isDirectory: true
-            )
+        let archive = try ZipArchive(
+            url: fileURL
+        )
 
-        try FileManager.default.createDirectory(
-            at: temporaryDirectory,
-            withIntermediateDirectories: true
+        let reader = try archive.open(
+            filename: "thumbnail.png"
         )
 
         defer {
-            try? FileManager.default.removeItem(
-                at: temporaryDirectory
+            reader.close()
+        }
+
+        var thumbnailData = Data()
+
+        var buffer = [UInt8](
+            repeating: 0,
+            count: 64 * 1024
+        )
+
+        while true {
+            let bytesRead = try buffer.withUnsafeMutableBytes { rawBuffer in
+                try reader.read(
+                    buf: rawBuffer
+                )
+            }
+
+            if bytesRead <= 0 {
+                break
+            }
+
+            thumbnailData.append(
+                buffer,
+                count: bytesRead
             )
         }
 
-        var extractionError: NSError?
-
-        let extractedFiles = SSZipArchive.unzipFile(
-            atPath: fileURL.path,
-            toDestination: temporaryDirectory.path,
-            preserveAttributes: false,
-            overwrite: true,
-            password: nil,
-            error: &extractionError,
-            delegate: nil
+        XCTAssertFalse(
+            thumbnailData.isEmpty
         )
+    }
 
-        XCTAssertTrue(
-            extractedFiles,
-            "Failed to extract .io file: \(extractionError?.localizedDescription ?? "Unknown error")"
-        )
+    func testPasswordProtectedIOFileReadsPartCount() throws {
+        let bundle = Bundle(for: Self.self)
 
-        let thumbnailURL = temporaryDirectory
-            .appendingPathComponent("thumbnail.png")
-
-        XCTAssertTrue(
-            FileManager.default.fileExists(
-                atPath: thumbnailURL.path
+        let fileURL = try XCTUnwrap(
+            bundle.url(
+                forResource: "MOC-41818_dandelbaum_Large tower connection 6085-6059",
+                withExtension: "io"
             )
+        )
+
+        let service = ModelMetadataService()
+
+        let partCount = try service.partCount(
+            for: fileURL
+        )
+
+        XCTAssertGreaterThan(
+            partCount,
+            0,
+            "The password-protected .io file should contain a valid part count."
         )
     }
 }

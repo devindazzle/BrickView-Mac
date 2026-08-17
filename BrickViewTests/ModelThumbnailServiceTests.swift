@@ -48,4 +48,24 @@ final class ModelThumbnailServiceTests: XCTestCase {
 
         XCTAssertNil(thumbnailData)
     }
+
+    func testPasswordProtectedIOFileLoadsThumbnail() throws {
+        let bundle = Bundle(for: ModelThumbnailServiceTests.self)
+
+        let fileURL = try XCTUnwrap(
+            bundle.url(
+                forResource: "MOC-41818_dandelbaum_Large tower connection 6085-6059",
+                withExtension: "io"
+            )
+        )
+
+        let service = ModelThumbnailService()
+
+        let thumbnailData = try service.thumbnailData(
+            for: fileURL
+        )
+
+        XCTAssertNotNil(thumbnailData)
+        XCTAssertFalse(thumbnailData?.isEmpty ?? true)
+    }
 }

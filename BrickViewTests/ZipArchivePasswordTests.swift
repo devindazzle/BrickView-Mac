@@ -7,12 +7,12 @@
 
 //
 //  Purpose:
-//  Verifies that ZipArchive can read legacy password-protected
+//  Verifies that SwiftZip can read legacy password-protected
 //  BrickLink Studio .io files using the known Studio password.
 //
 
 import XCTest
-import ZipArchive
+import SwiftZip
 
 final class ZipArchivePasswordTests: XCTestCase {
     func testLegacyStudioIOFileCanBeOpenedWithPassword() throws {
@@ -27,74 +27,46 @@ final class ZipArchivePasswordTests: XCTestCase {
             return
         }
 
-        XCTAssertTrue(
-            SSZipArchive.isFilePasswordProtected(
-                atPath: fileURL.path
-            )
+        let archive = try ZipArchive(
+            url: fileURL
         )
 
-        var passwordError: NSError?
-
-        let passwordIsValid = SSZipArchive.isPasswordValidForArchive(
-            atPath: fileURL.path,
-            password: "soho0909",
-            error: &passwordError
-        )
-
-        XCTAssertTrue(
-            passwordIsValid,
-            "Password validation failed: \(passwordError?.localizedDescription ?? "Unknown error")"
-        )
-
-        let temporaryDirectory = FileManager.default.temporaryDirectory
-            .appendingPathComponent(
-                "BrickView-ZipArchive-Password-Test-\(UUID().uuidString)",
-                isDirectory: true
-            )
-
-        try FileManager.default.createDirectory(
-            at: temporaryDirectory,
-            withIntermediateDirectories: true
+        let reader = try archive.open(
+            filename: "thumbnail.png",
+            password: "soho0909"
         )
 
         defer {
-            try? FileManager.default.removeItem(
-                at: temporaryDirectory
+            reader.close()
+        }
+
+        var thumbnailData = Data()
+
+        var buffer = [UInt8](
+            repeating: 0,
+            count: 64 * 1024
+        )
+
+        while true {
+            let bytesRead = try buffer.withUnsafeMutableBytes { rawBuffer in
+                try reader.read(
+                    buf: rawBuffer
+                )
+            }
+
+            if bytesRead <= 0 {
+                break
+            }
+
+            thumbnailData.append(
+                buffer,
+                count: bytesRead
             )
         }
 
-        var extractionError: NSError?
-
-        let extractedFiles = SSZipArchive.unzipFile(
-            atPath: fileURL.path,
-            toDestination: temporaryDirectory.path,
-            preserveAttributes: false,
-            overwrite: true,
-            password: "soho0909",
-            error: &extractionError,
-            delegate: nil
-        )
-
-        XCTAssertNotNil(
-            extractedFiles,
-            "Extraction failed: \(extractionError?.localizedDescription ?? "Unknown error")"
-        )
-
-        let thumbnailURL = temporaryDirectory
-            .appendingPathComponent("thumbnail.png")
-
-        XCTAssertTrue(
-            FileManager.default.fileExists(
-                atPath: thumbnailURL.path
-            ),
-            "thumbnail.png was not extracted from the password-protected .io file."
-        )
-
-        let thumbnailData = try Data(contentsOf: thumbnailURL)
-
         XCTAssertFalse(
             thumbnailData.isEmpty,
-            "thumbnail.png was extracted but contains no data."
+            "The password-protected .io file should contain thumbnail data."
         )
     }
 }

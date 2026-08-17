@@ -28,9 +28,9 @@
 		3B5154633030C7CC001D70DC /* ModelThumbnailServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154623030C7CC001D70DC /* ModelThumbnailServiceTests.swift */; };
 		3B5154653030C846001D70DC /* ModelThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154643030C846001D70DC /* ModelThumbnailView.swift */; };
 		3B5154673030C8C8001D70DC /* ModelThumbnailViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154663030C8C8001D70DC /* ModelThumbnailViewTests.swift */; };
-		3B9ACBE23033600E00A179F0 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = 3B9ACBE13033600E00A179F0 /* ZipArchive */; };
 		3B9ACBE43033612C00A179F0 /* ZipArchivePasswordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ACBE33033612C00A179F0 /* ZipArchivePasswordTests.swift */; };
 		3B9ACBE63033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io in Resources */ = {isa = PBXBuildFile; fileRef = 3B9ACBE53033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io */; };
+		3B9ACBEC30336EA300A179F0 /* SwiftZip in Frameworks */ = {isa = PBXBuildFile; productRef = 3B9ACBEB30336EA300A179F0 /* SwiftZip */; };
 		3BD32F2A3031B81300676D66 /* ThumbnailLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F293031B81300676D66 /* ThumbnailLoader.swift */; };
 		3BD32F2D3031B90000676D66 /* 383-knights-tournament-invalid.io in Resources */ = {isa = PBXBuildFile; fileRef = 3BD32F2B3031B90000676D66 /* 383-knights-tournament-invalid.io */; };
 		3BD32F2E3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io in Resources */ = {isa = PBXBuildFile; fileRef = 3BD32F2C3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io */; };
@@ -111,7 +111,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B9ACBE23033600E00A179F0 /* ZipArchive in Frameworks */,
+				3B9ACBEC30336EA300A179F0 /* SwiftZip in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,10 +192,10 @@
 		3B51542130307F9F001D70DC /* BrickViewTests */ = {
 			isa = PBXGroup;
 			children = (
-				3B9ACBE53033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io */,
 				3BD32F2B3031B90000676D66 /* 383-knights-tournament-invalid.io */,
 				3BD32F2C3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io */,
 				3B51544C3030B959001D70DC /* 383-knights-tournament.io */,
+				3B9ACBE53033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io */,
 				3B51542230307F9F001D70DC /* BrickViewTests.swift */,
 				3BD32F3F3031FC9300676D66 /* ModelFilterServiceTests.swift */,
 				3B5154523030BC4B001D70DC /* ModelLoaderServiceTests.swift */,
@@ -235,7 +235,7 @@
 			);
 			name = BrickView;
 			packageProductDependencies = (
-				3B9ACBE13033600E00A179F0 /* ZipArchive */,
+				3B9ACBEB30336EA300A179F0 /* SwiftZip */,
 			);
 			productName = BrickView;
 			productReference = 3B51540D30307F9D001D70DC /* BrickView.app */;
@@ -310,7 +310,7 @@
 			);
 			mainGroup = 3B51540430307F9D001D70DC;
 			packageReferences = (
-				3B9ACBE03033600E00A179F0 /* XCRemoteSwiftPackageReference "ZipArchive" */,
+				3B9ACBEA30336EA300A179F0 /* XCRemoteSwiftPackageReference "SwiftZip" */,
 			);
 			productRefGroup = 3B51540E30307F9D001D70DC /* Products */;
 			projectDirPath = "";
@@ -704,21 +704,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3B9ACBE03033600E00A179F0 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
+		3B9ACBEA30336EA300A179F0 /* XCRemoteSwiftPackageReference "SwiftZip" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ZipArchive/ZipArchive.git";
+			repositoryURL = "https://github.com/SwiftZip/SwiftZip.git";
 			requirement = {
 				kind = exactVersion;
-				version = 2.5.0;
+				version = 0.0.5;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3B9ACBE13033600E00A179F0 /* ZipArchive */ = {
+		3B9ACBEB30336EA300A179F0 /* SwiftZip */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3B9ACBE03033600E00A179F0 /* XCRemoteSwiftPackageReference "ZipArchive" */;
-			productName = ZipArchive;
+			package = 3B9ACBEA30336EA300A179F0 /* XCRemoteSwiftPackageReference "SwiftZip" */;
+			productName = SwiftZip;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

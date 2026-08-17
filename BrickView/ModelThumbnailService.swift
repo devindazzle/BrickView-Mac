@@ -13,7 +13,8 @@
 //  when a model has a generated thumbnail.
 //
 //  Legacy BrickLink Studio .io files may be password-protected.
-//  ZipArchive is used for both protected and unprotected archives.
+//  SwiftZip is used for both protected and unprotected archives
+//  and reads only the requested ZIP entry.
 //
 //  Missing thumbnails are treated as a normal condition rather
 //  than an error. The service therefore returns nil when the
@@ -24,63 +25,77 @@
 //
 
 import Foundation
-import ZipArchive
+import SwiftZip
 
 struct ModelThumbnailService {
     private let legacyArchivePassword: String = "soho0909"
 
     func thumbnailData(for modelURL: URL) throws -> Data? {
-        let temporaryDirectory = FileManager.default.temporaryDirectory
-            .appendingPathComponent(
-                "BrickView-Thumbnail-\(UUID().uuidString)",
-                isDirectory: true
+        let archive: ZipArchive
+
+        do {
+            archive = try ZipArchive(
+                url: modelURL
             )
-
-        try FileManager.default.createDirectory(
-            at: temporaryDirectory,
-            withIntermediateDirectories: true
-        )
-
-        defer {
-            try? FileManager.default.removeItem(
-                at: temporaryDirectory
-            )
-        }
-
-        let isPasswordProtected = SSZipArchive.isFilePasswordProtected(
-            atPath: modelURL.path
-        )
-
-        let password: String? = isPasswordProtected
-            ? legacyArchivePassword
-            : nil
-
-        var extractionError: NSError?
-
-        let extractedFiles = SSZipArchive.unzipFile(
-            atPath: modelURL.path,
-            toDestination: temporaryDirectory.path,
-            preserveAttributes: false,
-            overwrite: true,
-            password: password,
-            error: &extractionError,
-            delegate: nil
-        )
-
-        guard extractedFiles else {
+        } catch {
             throw ModelThumbnailError.invalidArchive
         }
 
-        let thumbnailURL = temporaryDirectory
-            .appendingPathComponent("thumbnail.png")
+        do {
+            return try readThumbnail(
+                from: archive,
+                password: nil
+            )
+        } catch {
+            do {
+                return try readThumbnail(
+                    from: archive,
+                    password: legacyArchivePassword
+                )
+            } catch {
+                return nil
+            }
+        }
+    }
 
-        guard FileManager.default.fileExists(
-            atPath: thumbnailURL.path
-        ) else {
-            return nil
+    private func readThumbnail(
+        from archive: ZipArchive,
+        password: String?
+    ) throws -> Data {
+        let reader = try archive.open(
+            filename: "thumbnail.png",
+            password: password
+        )
+
+        defer {
+            reader.close()
         }
 
-        return try Data(contentsOf: thumbnailURL)
+        var thumbnailData = Data()
+
+        var buffer = [UInt8](
+            repeating: 0,
+            count: 64 * 1024
+        )
+
+        while true {
+            let bytesRead = try buffer.withUnsafeMutableBytes { rawBuffer in
+                try reader.read(
+                    buf: rawBuffer
+                )
+            }
+
+            if bytesRead <= 0 {
+                break
+            }
+
+            thumbnailData.append(
+                buffer,
+                count: bytesRead
+            )
+        }
+
+        return thumbnailData
     }
 }
 

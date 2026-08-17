@@ -10,74 +10,51 @@
 //  Reads metadata from a single BrickLink Studio .io model file.
 //
 //  A .io file is a ZIP archive containing, among other files,
-//  an .info file with model metadata. This service extracts the
-//  total part count from that metadata.
+//  an .info file with model metadata. This service reads the
+//  total part count directly from the .info entry.
 //
 //  Legacy BrickLink Studio .io files may be password-protected.
-//  ZipArchive is used for both protected and unprotected archives.
+//  SwiftZip is used for both protected and unprotected archives
+//  and reads only the requested ZIP entry.
 //
 //  It does not manage application state, update the user interface,
 //  discover model files, or generate thumbnails.
 //
 
 import Foundation
-import ZipArchive
+import SwiftZip
 
 struct ModelMetadataService {
     private let legacyArchivePassword: String = "soho0909"
 
     func partCount(for modelURL: URL) throws -> Int {
-        let temporaryDirectory = FileManager.default.temporaryDirectory
-            .appendingPathComponent(
-                "BrickView-Metadata-\(UUID().uuidString)",
-                isDirectory: true
+        let archive: ZipArchive
+
+        do {
+            archive = try ZipArchive(
+                url: modelURL
             )
-
-        try FileManager.default.createDirectory(
-            at: temporaryDirectory,
-            withIntermediateDirectories: true
-        )
-
-        defer {
-            try? FileManager.default.removeItem(
-                at: temporaryDirectory
-            )
-        }
-
-        let isPasswordProtected = SSZipArchive.isFilePasswordProtected(
-            atPath: modelURL.path
-        )
-
-        let password: String? = isPasswordProtected
-            ? legacyArchivePassword
-            : nil
-
-        var extractionError: NSError?
-
-        let extractedFiles = SSZipArchive.unzipFile(
-            atPath: modelURL.path,
-            toDestination: temporaryDirectory.path,
-            preserveAttributes: false,
-            overwrite: true,
-            password: password,
-            error: &extractionError,
-            delegate: nil
-        )
-
-        guard extractedFiles else {
+        } catch {
             throw ModelMetadataError.invalidArchive
         }
 
-        let infoURL = temporaryDirectory
-            .appendingPathComponent(".info")
+        let infoData: Data
 
-        guard FileManager.default.fileExists(
-            atPath: infoURL.path
-        ) else {
-            throw ModelMetadataError.infoFileNotFound
+        do {
+            infoData = try readInfo(
+                from: archive,
+                password: nil
+            )
+        } catch {
+            do {
+                infoData = try readInfo(
+                    from: archive,
+                    password: legacyArchivePassword
+                )
+            } catch {
+                throw ModelMetadataError.infoFileNotFound
+            }
         }
-
-        let infoData = try Data(contentsOf: infoURL)
 
         let metadata = try JSONDecoder().decode(
             ModelInfo.self,
@@ -85,6 +62,46 @@ struct ModelMetadataService {
         )
 
         return metadata.totalParts
+    }
+
+    private func readInfo(
+        from archive: ZipArchive,
+        password: String?
+    ) throws -> Data {
+        let reader = try archive.open(
+            filename: ".info",
+            password: password
+        )
+
+        defer {
+            reader.close()
+        }
+
+        var infoData = Data()
+
+        var buffer = [UInt8](
+            repeating: 0,
+            count: 64 * 1024
+        )
+
+        while true {
+            let bytesRead = try buffer.withUnsafeMutableBytes { rawBuffer in
+                try reader.read(
+                    buf: rawBuffer
+                )
+            }
+
+            if bytesRead <= 0 {
+                break
+            }
+
+            infoData.append(
+                buffer,
+                count: bytesRead
+            )
+        }
+
+        return infoData
     }
 }
 
