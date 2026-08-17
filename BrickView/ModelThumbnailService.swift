@@ -12,6 +12,9 @@
 //  A .io file is a ZIP archive containing a thumbnail.png file
 //  when a model has a generated thumbnail.
 //
+//  Legacy BrickLink Studio .io files may be password-protected.
+//  ZipArchive is used for both protected and unprotected archives.
+//
 //  Missing thumbnails are treated as a normal condition rather
 //  than an error. The service therefore returns nil when the
 //  thumbnail is not present.
@@ -21,28 +24,63 @@
 //
 
 import Foundation
-import ZIPFoundation
+import ZipArchive
 
 struct ModelThumbnailService {
+    private let legacyArchivePassword: String = "soho0909"
+
     func thumbnailData(for modelURL: URL) throws -> Data? {
-        guard let archive = Archive(
-            url: modelURL,
-            accessMode: .read
-        ) else {
+        let temporaryDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(
+                "BrickView-Thumbnail-\(UUID().uuidString)",
+                isDirectory: true
+            )
+
+        try FileManager.default.createDirectory(
+            at: temporaryDirectory,
+            withIntermediateDirectories: true
+        )
+
+        defer {
+            try? FileManager.default.removeItem(
+                at: temporaryDirectory
+            )
+        }
+
+        let isPasswordProtected = SSZipArchive.isFilePasswordProtected(
+            atPath: modelURL.path
+        )
+
+        let password: String? = isPasswordProtected
+            ? legacyArchivePassword
+            : nil
+
+        var extractionError: NSError?
+
+        let extractedFiles = SSZipArchive.unzipFile(
+            atPath: modelURL.path,
+            toDestination: temporaryDirectory.path,
+            preserveAttributes: false,
+            overwrite: true,
+            password: password,
+            error: &extractionError,
+            delegate: nil
+        )
+
+        guard extractedFiles else {
             throw ModelThumbnailError.invalidArchive
         }
 
-        guard let thumbnailEntry = archive["thumbnail.png"] else {
+        let thumbnailURL = temporaryDirectory
+            .appendingPathComponent("thumbnail.png")
+
+        guard FileManager.default.fileExists(
+            atPath: thumbnailURL.path
+        ) else {
             return nil
         }
 
-        var thumbnailData = Data()
-
-        _ = try archive.extract(thumbnailEntry) { data in
-            thumbnailData.append(data)
-        }
-
-        return thumbnailData
+        return try Data(contentsOf: thumbnailURL)
     }
 }
 

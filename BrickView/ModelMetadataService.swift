@@ -13,31 +13,71 @@
 //  an .info file with model metadata. This service extracts the
 //  total part count from that metadata.
 //
+//  Legacy BrickLink Studio .io files may be password-protected.
+//  ZipArchive is used for both protected and unprotected archives.
+//
 //  It does not manage application state, update the user interface,
 //  discover model files, or generate thumbnails.
 //
 
 import Foundation
-import ZIPFoundation
+import ZipArchive
 
 struct ModelMetadataService {
+    private let legacyArchivePassword: String = "soho0909"
+
     func partCount(for modelURL: URL) throws -> Int {
-        guard let archive = Archive(
-            url: modelURL,
-            accessMode: .read
-        ) else {
+        let temporaryDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(
+                "BrickView-Metadata-\(UUID().uuidString)",
+                isDirectory: true
+            )
+
+        try FileManager.default.createDirectory(
+            at: temporaryDirectory,
+            withIntermediateDirectories: true
+        )
+
+        defer {
+            try? FileManager.default.removeItem(
+                at: temporaryDirectory
+            )
+        }
+
+        let isPasswordProtected = SSZipArchive.isFilePasswordProtected(
+            atPath: modelURL.path
+        )
+
+        let password: String? = isPasswordProtected
+            ? legacyArchivePassword
+            : nil
+
+        var extractionError: NSError?
+
+        let extractedFiles = SSZipArchive.unzipFile(
+            atPath: modelURL.path,
+            toDestination: temporaryDirectory.path,
+            preserveAttributes: false,
+            overwrite: true,
+            password: password,
+            error: &extractionError,
+            delegate: nil
+        )
+
+        guard extractedFiles else {
             throw ModelMetadataError.invalidArchive
         }
 
-        guard let infoEntry = archive[".info"] else {
+        let infoURL = temporaryDirectory
+            .appendingPathComponent(".info")
+
+        guard FileManager.default.fileExists(
+            atPath: infoURL.path
+        ) else {
             throw ModelMetadataError.infoFileNotFound
         }
 
-        var infoData = Data()
-
-        _ = try archive.extract(infoEntry) { data in
-            infoData.append(data)
-        }
+        let infoData = try Data(contentsOf: infoURL)
 
         let metadata = try JSONDecoder().decode(
             ModelInfo.self,

@@ -6,7 +6,7 @@
 //
 
 import XCTest
-import ZIPFoundation
+import ZipArchive
 
 @testable import BrickView
 
@@ -28,8 +28,7 @@ final class ModelMetadataServiceTests: XCTestCase {
 
         XCTAssertEqual(partCount, 232)
     }
-    
-    
+
     func testIOFileContainsThumbnail() throws {
         let bundle = Bundle(for: ModelMetadataServiceTests.self)
 
@@ -40,14 +39,47 @@ final class ModelMetadataServiceTests: XCTestCase {
             )
         )
 
-        let archive = try XCTUnwrap(
-            Archive(
-                url: fileURL,
-                accessMode: .read
+        let temporaryDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent(
+                "BrickView-Metadata-Test-\(UUID().uuidString)",
+                isDirectory: true
             )
+
+        try FileManager.default.createDirectory(
+            at: temporaryDirectory,
+            withIntermediateDirectories: true
         )
 
-        XCTAssertNotNil(archive["thumbnail.png"])
+        defer {
+            try? FileManager.default.removeItem(
+                at: temporaryDirectory
+            )
+        }
+
+        var extractionError: NSError?
+
+        let extractedFiles = SSZipArchive.unzipFile(
+            atPath: fileURL.path,
+            toDestination: temporaryDirectory.path,
+            preserveAttributes: false,
+            overwrite: true,
+            password: nil,
+            error: &extractionError,
+            delegate: nil
+        )
+
+        XCTAssertTrue(
+            extractedFiles,
+            "Failed to extract .io file: \(extractionError?.localizedDescription ?? "Unknown error")"
+        )
+
+        let thumbnailURL = temporaryDirectory
+            .appendingPathComponent("thumbnail.png")
+
+        XCTAssertTrue(
+            FileManager.default.fileExists(
+                atPath: thumbnailURL.path
+            )
+        )
     }
-    
 }

@@ -20,7 +20,6 @@
 		3B5154423030AEEC001D70DC /* FolderPickerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154413030AEEC001D70DC /* FolderPickerService.swift */; };
 		3B5154443030B0C4001D70DC /* ModelFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154433030B0C4001D70DC /* ModelFileService.swift */; };
 		3B5154463030B5AB001D70DC /* ModelMetadataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154453030B5AB001D70DC /* ModelMetadataService.swift */; };
-		3B5154493030B6E9001D70DC /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 3B5154483030B6E9001D70DC /* ZIPFoundation */; };
 		3B51544D3030B959001D70DC /* 383-knights-tournament.io in Resources */ = {isa = PBXBuildFile; fileRef = 3B51544C3030B959001D70DC /* 383-knights-tournament.io */; };
 		3B51544F3030B9A8001D70DC /* ModelMetadataServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B51544E3030B9A8001D70DC /* ModelMetadataServiceTests.swift */; };
 		3B5154513030BBB2001D70DC /* ModelLoaderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154503030BBB2001D70DC /* ModelLoaderService.swift */; };
@@ -29,6 +28,9 @@
 		3B5154633030C7CC001D70DC /* ModelThumbnailServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154623030C7CC001D70DC /* ModelThumbnailServiceTests.swift */; };
 		3B5154653030C846001D70DC /* ModelThumbnailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154643030C846001D70DC /* ModelThumbnailView.swift */; };
 		3B5154673030C8C8001D70DC /* ModelThumbnailViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B5154663030C8C8001D70DC /* ModelThumbnailViewTests.swift */; };
+		3B9ACBE23033600E00A179F0 /* ZipArchive in Frameworks */ = {isa = PBXBuildFile; productRef = 3B9ACBE13033600E00A179F0 /* ZipArchive */; };
+		3B9ACBE43033612C00A179F0 /* ZipArchivePasswordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9ACBE33033612C00A179F0 /* ZipArchivePasswordTests.swift */; };
+		3B9ACBE63033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io in Resources */ = {isa = PBXBuildFile; fileRef = 3B9ACBE53033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io */; };
 		3BD32F2A3031B81300676D66 /* ThumbnailLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F293031B81300676D66 /* ThumbnailLoader.swift */; };
 		3BD32F2D3031B90000676D66 /* 383-knights-tournament-invalid.io in Resources */ = {isa = PBXBuildFile; fileRef = 3BD32F2B3031B90000676D66 /* 383-knights-tournament-invalid.io */; };
 		3BD32F2E3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io in Resources */ = {isa = PBXBuildFile; fileRef = 3BD32F2C3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io */; };
@@ -87,6 +89,8 @@
 		3B5154623030C7CC001D70DC /* ModelThumbnailServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelThumbnailServiceTests.swift; sourceTree = "<group>"; };
 		3B5154643030C846001D70DC /* ModelThumbnailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelThumbnailView.swift; sourceTree = "<group>"; };
 		3B5154663030C8C8001D70DC /* ModelThumbnailViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelThumbnailViewTests.swift; sourceTree = "<group>"; };
+		3B9ACBE33033612C00A179F0 /* ZipArchivePasswordTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipArchivePasswordTests.swift; sourceTree = "<group>"; };
+		3B9ACBE53033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MOC-41818_dandelbaum_Large tower connection 6085-6059.io"; sourceTree = "<group>"; };
 		3BD32F293031B81300676D66 /* ThumbnailLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailLoader.swift; sourceTree = "<group>"; };
 		3BD32F2B3031B90000676D66 /* 383-knights-tournament-invalid.io */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = "383-knights-tournament-invalid.io"; path = "../../../../Dropbox/LEGO/Brick Link Studio/Test folder/383-knights-tournament-invalid.io"; sourceTree = "<group>"; };
 		3BD32F2C3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io */ = {isa = PBXFileReference; lastKnownFileType = file; name = "383-knights-tournament-no-thumbnail.io"; path = "../../../../Dropbox/LEGO/Brick Link Studio/Test folder/383-knights-tournament-no-thumbnail.io"; sourceTree = "<group>"; };
@@ -107,7 +111,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3B5154493030B6E9001D70DC /* ZIPFoundation in Frameworks */,
+				3B9ACBE23033600E00A179F0 /* ZipArchive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,6 +192,7 @@
 		3B51542130307F9F001D70DC /* BrickViewTests */ = {
 			isa = PBXGroup;
 			children = (
+				3B9ACBE53033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io */,
 				3BD32F2B3031B90000676D66 /* 383-knights-tournament-invalid.io */,
 				3BD32F2C3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io */,
 				3B51544C3030B959001D70DC /* 383-knights-tournament.io */,
@@ -199,6 +204,7 @@
 				3B5154623030C7CC001D70DC /* ModelThumbnailServiceTests.swift */,
 				3B5154663030C8C8001D70DC /* ModelThumbnailViewTests.swift */,
 				3BD32F313031BFDD00676D66 /* ThumbnailLoaderTests.swift */,
+				3B9ACBE33033612C00A179F0 /* ZipArchivePasswordTests.swift */,
 			);
 			path = BrickViewTests;
 			sourceTree = "<group>";
@@ -229,7 +235,7 @@
 			);
 			name = BrickView;
 			packageProductDependencies = (
-				3B5154483030B6E9001D70DC /* ZIPFoundation */,
+				3B9ACBE13033600E00A179F0 /* ZipArchive */,
 			);
 			productName = BrickView;
 			productReference = 3B51540D30307F9D001D70DC /* BrickView.app */;
@@ -304,7 +310,7 @@
 			);
 			mainGroup = 3B51540430307F9D001D70DC;
 			packageReferences = (
-				3B5154473030B6E9001D70DC /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+				3B9ACBE03033600E00A179F0 /* XCRemoteSwiftPackageReference "ZipArchive" */,
 			);
 			productRefGroup = 3B51540E30307F9D001D70DC /* Products */;
 			projectDirPath = "";
@@ -334,6 +340,7 @@
 				3BD32F2D3031B90000676D66 /* 383-knights-tournament-invalid.io in Resources */,
 				3BD32F2E3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io in Resources */,
 				3B51544D3030B959001D70DC /* 383-knights-tournament.io in Resources */,
+				3B9ACBE63033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -377,6 +384,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3B9ACBE43033612C00A179F0 /* ZipArchivePasswordTests.swift in Sources */,
 				3B5154673030C8C8001D70DC /* ModelThumbnailViewTests.swift in Sources */,
 				3BD32F3C3031F5E100676D66 /* ModelSortingServiceTests.swift in Sources */,
 				3B5154633030C7CC001D70DC /* ModelThumbnailServiceTests.swift in Sources */,
@@ -696,21 +704,21 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		3B5154473030B6E9001D70DC /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+		3B9ACBE03033600E00A179F0 /* XCRemoteSwiftPackageReference "ZipArchive" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/weichsel/ZIPFoundation.git";
+			repositoryURL = "https://github.com/ZipArchive/ZipArchive.git";
 			requirement = {
 				kind = exactVersion;
-				version = 0.9.2;
+				version = 2.5.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		3B5154483030B6E9001D70DC /* ZIPFoundation */ = {
+		3B9ACBE13033600E00A179F0 /* ZipArchive */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 3B5154473030B6E9001D70DC /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
-			productName = ZIPFoundation;
+			package = 3B9ACBE03033600E00A179F0 /* XCRemoteSwiftPackageReference "ZipArchive" */;
+			productName = ZipArchive;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
