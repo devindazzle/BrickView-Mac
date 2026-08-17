@@ -30,6 +30,7 @@ struct ContentView: View {
 
     private let gridSpacing: CGFloat = 20
     private let gridPadding: CGFloat = 16
+    private let gridDensityDefaultsKey: String = "GridDensity"
 
     @State private var selectedFolder: URL?
     @State private var models: [Model] = []
@@ -112,6 +113,11 @@ struct ContentView: View {
                 }
 
                 Button("Refresh") {
+                    guard let selectedFolder else {
+                        return
+                    }
+
+                    loadModels(from: selectedFolder)
                 }
             }
             .padding(.horizontal)
@@ -238,6 +244,12 @@ struct ContentView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
+            .onChange(of: gridDensity) { newDensity in
+                UserDefaults.standard.set(
+                    newDensity.rawValue,
+                    forKey: gridDensityDefaultsKey
+                )
+            }
 
             Divider()
 
@@ -287,6 +299,13 @@ struct ContentView: View {
             WindowConfigurator()
         }
         .task {
+            if let savedDensityRawValue = UserDefaults.standard.string(
+                forKey: gridDensityDefaultsKey
+            ),
+               let savedDensity = GridDensity(rawValue: savedDensityRawValue) {
+                gridDensity = savedDensity
+            }
+
             if let restoredFolder = folderBookmarkService.restoreFolder(),
                let accessSession = FolderAccessSession(folder: restoredFolder) {
                 folderAccessSession = accessSession

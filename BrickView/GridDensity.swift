@@ -12,8 +12,9 @@
 
 import Foundation
 
-enum GridDensity: Equatable {
+enum GridDensity: String, Equatable {
     case small
     case medium
     case large
 }
+

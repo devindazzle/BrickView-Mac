@@ -158,6 +158,7 @@
 				3BD32F353031E97F00676D66 /* FolderAccessSession.swift */,
 				3BD32F333031E44D00676D66 /* FolderBookmarkService.swift */,
 				3B5154413030AEEC001D70DC /* FolderPickerService.swift */,
+				3BD32F413032008500676D66 /* GridDensity.swift */,
 				3B51543F3030A6B7001D70DC /* Model.swift */,
 				3B51543D3030A4D6001D70DC /* ModelCardView.swift */,
 				3B5154433030B0C4001D70DC /* ModelFileService.swift */,
@@ -172,7 +173,6 @@
 				3BD32F2F3031BBCF00676D66 /* ThumbnailConfiguration.swift */,
 				3BD32F293031B81300676D66 /* ThumbnailLoader.swift */,
 				3B51543B3030A022001D70DC /* WindowConfigurator.swift */,
-				3BD32F413032008500676D66 /* GridDensity.swift */,
 			);
 			path = BrickView;
 			sourceTree = "<group>";

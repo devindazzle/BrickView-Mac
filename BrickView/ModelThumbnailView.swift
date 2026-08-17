@@ -60,7 +60,14 @@ struct ModelThumbnailView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .task(id: model.id) {
+        .task(
+            id: ThumbnailTaskIdentifier(
+                modelURL: model.id,
+                modificationDate: model.modificationDate,
+                width: size.width,
+                height: size.height
+            )
+        ) {
             await loadThumbnail()
         }
     }
@@ -116,6 +123,13 @@ struct ModelThumbnailView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+}
+
+private struct ThumbnailTaskIdentifier: Hashable {
+    let modelURL: URL
+    let modificationDate: Date?
+    let width: CGFloat
+    let height: CGFloat
 }
 
 private enum ThumbnailState {
