@@ -11,7 +11,7 @@
 //
 //  The view defines the overall BrickView user interface structure,
 //  including the application header, model controls, model count,
-//  and model grid.
+//  model grid, and shared context-menu state.
 //
 //  Model data loading, model collection state, selected folder state,
 //  and security-scoped folder access are coordinated by
@@ -26,6 +26,7 @@
 import SwiftUI
 
 struct ContentView: View {
+
     private let folderPickerService = FolderPickerService()
     private let folderBookmarkService = FolderBookmarkService()
     private let modelSortingService = ModelSortingService()
@@ -56,6 +57,7 @@ struct ContentView: View {
     @State private var sortOrder: ModelSortOrder = .descending
     @State private var searchText: String = ""
     @State private var gridDensity: GridDensity = .medium
+    @State private var contextMenuModelID: URL?
 
     private var selectedFolderPath: String {
         guard let folder = modelBrowserCoordinator.selectedFolder else {
@@ -153,9 +155,12 @@ struct ContentView: View {
             Divider()
 
             HStack {
-                TextField("Search models...", text: $searchText)
-                    .textFieldStyle(.roundedBorder)
-                    .frame(maxWidth: 360)
+                TextField(
+                    "Search models...",
+                    text: $searchText
+                )
+                .textFieldStyle(.roundedBorder)
+                .frame(maxWidth: 360)
 
                 Spacer()
 
@@ -257,7 +262,10 @@ struct ContentView: View {
                 )
                 .cornerRadius(6)
 
-                Picker("Grid density", selection: $gridDensity) {
+                Picker(
+                    "Grid density",
+                    selection: $gridDensity
+                ) {
                     Image(systemName: "square.grid.2x2")
                         .tag(GridDensity.small)
 
@@ -318,11 +326,24 @@ struct ContentView: View {
                                 ModelCardView(
                                     model: model,
                                     sizeDefinition:
-                                        thumbnailSizeDefinition
+                                        thumbnailSizeDefinition,
+                                    isContextMenuVisible:
+                                        contextMenuModelID == model.id,
+                                    onContextMenuRequested: {
+                                        contextMenuModelID = model.id
+                                    },
+                                    onContextMenuDismissed: {
+                                        if contextMenuModelID == model.id {
+                                            contextMenuModelID = nil
+                                        }
+                                    }
                                 )
                             }
                         }
                         .padding(gridPadding)
+                    }
+                    .onTapGesture {
+                        contextMenuModelID = nil
                     }
                 }
             }
@@ -378,8 +399,12 @@ struct ContentView: View {
         }
     }
 
-    private func gridColumns(for width: CGFloat) -> [GridItem] {
-        let itemWidth = thumbnailSizeDefinition.itemSize.width
+    private func gridColumns(
+        for width: CGFloat
+    ) -> [GridItem] {
+        let itemWidth =
+            thumbnailSizeDefinition.itemSize.width
+
         let availableWidth = max(
             0,
             width - (gridPadding * 2)
@@ -406,6 +431,7 @@ struct ContentView: View {
 }
 
 struct ContentView_Previews: PreviewProvider {
+
     static var previews: some View {
         ContentView()
     }
