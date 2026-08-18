@@ -5,6 +5,16 @@
 //  Created by Kim Pedersen on 15/08/2026.
 //
 
+//
+//  Purpose:
+//  Verifies model loading from folders and individual BrickLink Studio
+//  .io files.
+//
+//  The tests use the project's bundled .io test resources so that model
+//  loading behaviour remains deterministic and independent of the user's
+//  actual BrickView folders.
+//
+
 import XCTest
 @testable import BrickView
 
@@ -24,16 +34,54 @@ final class ModelLoaderServiceTests: XCTestCase {
 
         let service = ModelLoaderService()
 
-        let models = try await service.loadModels(from: folderURL)
-
-        let model = try XCTUnwrap(
-            models.first { $0.filename == "383-knights-tournament.io" }
+        let models = try await service.loadModels(
+            from: folderURL
         )
 
-        XCTAssertEqual(model.partCount, 232)
+        let model = try XCTUnwrap(
+            models.first {
+                $0.filename == "383-knights-tournament.io"
+            }
+        )
+
+        XCTAssertEqual(
+            model.partCount,
+            232
+        )
     }
-    
-    
+
+    func testLoadModelFromFile() throws {
+        let bundle = Bundle(for: ModelLoaderServiceTests.self)
+
+        let fileURL = try XCTUnwrap(
+            bundle.url(
+                forResource: "383-knights-tournament",
+                withExtension: "io"
+            )
+        )
+
+        let service = ModelLoaderService()
+
+        let model = try service.loadModel(
+            from: fileURL
+        )
+
+        XCTAssertEqual(
+            model.filename,
+            "383-knights-tournament.io"
+        )
+
+        XCTAssertEqual(
+            model.status,
+            .valid
+        )
+
+        XCTAssertEqual(
+            model.partCount,
+            232
+        )
+    }
+
     func testLoadModelsHandlesValidInvalidAndMissingThumbnailFiles() async throws {
         let bundle = Bundle(for: ModelLoaderServiceTests.self)
 
@@ -48,7 +96,9 @@ final class ModelLoaderServiceTests: XCTestCase {
 
         let service = ModelLoaderService()
 
-        let models = try await service.loadModels(from: folderURL)
+        let models = try await service.loadModels(
+            from: folderURL
+        )
 
         let validModel = try XCTUnwrap(
             models.first {
@@ -68,14 +118,33 @@ final class ModelLoaderServiceTests: XCTestCase {
             }
         )
 
-        XCTAssertEqual(validModel.status, .valid)
-        XCTAssertEqual(validModel.partCount, 232)
+        XCTAssertEqual(
+            validModel.status,
+            .valid
+        )
 
-        XCTAssertEqual(noThumbnailModel.status, .valid)
-        XCTAssertEqual(noThumbnailModel.partCount, 232)
+        XCTAssertEqual(
+            validModel.partCount,
+            232
+        )
 
-        XCTAssertEqual(invalidModel.status, .invalid)
-        XCTAssertNil(invalidModel.partCount)
+        XCTAssertEqual(
+            noThumbnailModel.status,
+            .valid
+        )
+
+        XCTAssertEqual(
+            noThumbnailModel.partCount,
+            232
+        )
+
+        XCTAssertEqual(
+            invalidModel.status,
+            .invalid
+        )
+
+        XCTAssertNil(
+            invalidModel.partCount
+        )
     }
-    
 }

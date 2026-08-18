@@ -46,6 +46,8 @@
 		3BD32F3E3031FBDA00676D66 /* ModelFilterService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F3D3031FBDA00676D66 /* ModelFilterService.swift */; };
 		3BD32F403031FC9300676D66 /* ModelFilterServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F3F3031FC9300676D66 /* ModelFilterServiceTests.swift */; };
 		3BD32F423032008500676D66 /* GridDensity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD32F413032008500676D66 /* GridDensity.swift */; };
+		3BE2119630349D950091F3CF /* ModelBrowserCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE2119530349D950091F3CF /* ModelBrowserCoordinator.swift */; };
+		3BE211983034A6630091F3CF /* ModelBrowserCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE211973034A6620091F3CF /* ModelBrowserCoordinatorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +110,8 @@
 		3BD32F3D3031FBDA00676D66 /* ModelFilterService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelFilterService.swift; sourceTree = "<group>"; };
 		3BD32F3F3031FC9300676D66 /* ModelFilterServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelFilterServiceTests.swift; sourceTree = "<group>"; };
 		3BD32F413032008500676D66 /* GridDensity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridDensity.swift; sourceTree = "<group>"; };
+		3BE2119530349D950091F3CF /* ModelBrowserCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelBrowserCoordinator.swift; sourceTree = "<group>"; };
+		3BE211973034A6620091F3CF /* ModelBrowserCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelBrowserCoordinatorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -168,6 +172,7 @@
 				3B5154413030AEEC001D70DC /* FolderPickerService.swift */,
 				3BD32F413032008500676D66 /* GridDensity.swift */,
 				3B51543F3030A6B7001D70DC /* Model.swift */,
+				3BE2119530349D950091F3CF /* ModelBrowserCoordinator.swift */,
 				3B51543D3030A4D6001D70DC /* ModelCardView.swift */,
 				3B5154433030B0C4001D70DC /* ModelFileService.swift */,
 				3BD32F3D3031FBDA00676D66 /* ModelFilterService.swift */,
@@ -200,9 +205,11 @@
 				3BD32F2B3031B90000676D66 /* 383-knights-tournament-invalid.io */,
 				3BD32F2C3031B90000676D66 /* 383-knights-tournament-no-thumbnail.io */,
 				3B51544C3030B959001D70DC /* 383-knights-tournament.io */,
-				3B9ACBE53033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io */,
 				3B51542230307F9F001D70DC /* BrickViewTests.swift */,
+				3B9ACBE53033615600A179F0 /* MOC-41818_dandelbaum_Large tower connection 6085-6059.io */,
+				3BE211973034A6620091F3CF /* ModelBrowserCoordinatorTests.swift */,
 				3BD32F3F3031FC9300676D66 /* ModelFilterServiceTests.swift */,
+				3B9ACBF33033892500A179F0 /* ModelFolderMonitorServiceTests.swift */,
 				3B5154523030BC4B001D70DC /* ModelLoaderServiceTests.swift */,
 				3B51544E3030B9A8001D70DC /* ModelMetadataServiceTests.swift */,
 				3BD32F3B3031F5E100676D66 /* ModelSortingServiceTests.swift */,
@@ -210,7 +217,6 @@
 				3B5154663030C8C8001D70DC /* ModelThumbnailViewTests.swift */,
 				3BD32F313031BFDD00676D66 /* ThumbnailLoaderTests.swift */,
 				3B9ACBE33033612C00A179F0 /* ZipArchivePasswordTests.swift */,
-				3B9ACBF33033892500A179F0 /* ModelFolderMonitorServiceTests.swift */,
 			);
 			path = BrickViewTests;
 			sourceTree = "<group>";
@@ -382,6 +388,7 @@
 				3B51541330307F9D001D70DC /* ContentView.swift in Sources */,
 				3B51541130307F9D001D70DC /* BrickViewApp.swift in Sources */,
 				3B5154423030AEEC001D70DC /* FolderPickerService.swift in Sources */,
+				3BE2119630349D950091F3CF /* ModelBrowserCoordinator.swift in Sources */,
 				3BD32F363031E97F00676D66 /* FolderAccessSession.swift in Sources */,
 				3BD32F3E3031FBDA00676D66 /* ModelFilterService.swift in Sources */,
 			);
@@ -393,6 +400,7 @@
 			files = (
 				3B9ACBE43033612C00A179F0 /* ZipArchivePasswordTests.swift in Sources */,
 				3B5154673030C8C8001D70DC /* ModelThumbnailViewTests.swift in Sources */,
+				3BE211983034A6630091F3CF /* ModelBrowserCoordinatorTests.swift in Sources */,
 				3BD32F3C3031F5E100676D66 /* ModelSortingServiceTests.swift in Sources */,
 				3B5154633030C7CC001D70DC /* ModelThumbnailServiceTests.swift in Sources */,
 				3BD32F403031FC9300676D66 /* ModelFilterServiceTests.swift in Sources */,

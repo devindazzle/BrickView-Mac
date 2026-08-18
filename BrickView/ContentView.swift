@@ -13,10 +13,10 @@
 //  including the application header, model controls, model count,
 //  and model grid.
 //
-//  ContentView is responsible for composing the UI and coordinating
-//  its visual layout. Individual UI components, model data handling,
-//  file loading, thumbnail generation, and other application services
-//  should be kept in dedicated components or services.
+//  Model data loading, model collection state, selected folder state,
+//  and security-scoped folder access are coordinated by
+//  ModelBrowserCoordinator. ContentView is responsible for presenting
+//  that state and coordinating UI-specific interactions.
 //
 
 import SwiftUI
@@ -24,7 +24,6 @@ import SwiftUI
 struct ContentView: View {
     private let folderPickerService = FolderPickerService()
     private let folderBookmarkService = FolderBookmarkService()
-    private let modelLoaderService = ModelLoaderService()
     private let modelSortingService = ModelSortingService()
     private let modelFilterService = ModelFilterService()
 
@@ -32,14 +31,27 @@ struct ContentView: View {
     private let gridPadding: CGFloat = 16
     private let gridDensityDefaultsKey: String = "GridDensity"
 
-    @State private var selectedFolder: URL?
-    @State private var models: [Model] = []
-    @State private var loadingError: String?
-    @State private var folderAccessSession: FolderAccessSession?
+    @StateObject private var modelBrowserCoordinator =
+        ModelBrowserCoordinator()
+
     @State private var sortOption: ModelSortOption = .modificationDate
     @State private var sortOrder: ModelSortOrder = .descending
     @State private var searchText: String = ""
     @State private var gridDensity: GridDensity = .medium
+
+    private var selectedFolderPath: String {
+        guard let folder = modelBrowserCoordinator.selectedFolder else {
+            return "No folder selected"
+        }
+
+        let homePath =
+            FileManager.default.homeDirectoryForCurrentUser.path
+
+        return folder.path.replacingOccurrences(
+            of: homePath,
+            with: "~"
+        )
+    }
 
     private var thumbnailSizeDefinition: ThumbnailSizeDefinition {
         switch gridDensity {
@@ -56,7 +68,7 @@ struct ContentView: View {
 
     private var filteredModels: [Model] {
         modelFilterService.filter(
-            models,
+            modelBrowserCoordinator.models,
             matching: searchText
         )
     }
@@ -76,48 +88,39 @@ struct ContentView: View {
                     .font(.title2)
                     .fontWeight(.bold)
 
-                Text(
-                    selectedFolder.map { folder in
-                        let homePath = FileManager.default.homeDirectoryForCurrentUser.path
-                        let abbreviatedPath = folder.path.replacingOccurrences(
-                            of: homePath,
-                            with: "~"
-                        )
-
-                        return "Folder: \(folder.lastPathComponent) · \(abbreviatedPath)"
-                    } ?? "No folder selected"
-                )
-                .foregroundColor(.secondary)
-                .lineLimit(1)
-                .truncationMode(.middle)
-                .help(selectedFolder?.path ?? "")
+                Text(selectedFolderPath)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .help(
+                        modelBrowserCoordinator.selectedFolder?.path
+                            ?? ""
+                    )
 
                 Spacer()
 
                 Button("Select folder") {
                     if let folder = folderPickerService.selectFolder() {
-                        guard let accessSession = FolderAccessSession(folder: folder) else {
-                            selectedFolder = nil
-                            models = []
-                            loadingError = "The selected folder could not be accessed."
-                            return
+                        let didSelectFolder =
+                            modelBrowserCoordinator.selectFolder(folder)
+
+                        if didSelectFolder {
+                            try? folderBookmarkService.saveBookmark(
+                                for: folder
+                            )
                         }
-
-                        folderAccessSession = accessSession
-                        selectedFolder = accessSession.folder
-
-                        try? folderBookmarkService.saveBookmark(for: accessSession.folder)
-
-                        loadModels(from: accessSession.folder)
                     }
                 }
 
                 Button("Refresh") {
-                    guard let selectedFolder else {
+                    guard let selectedFolder =
+                        modelBrowserCoordinator.selectedFolder else {
                         return
                     }
 
-                    loadModels(from: selectedFolder)
+                    modelBrowserCoordinator.loadModels(
+                        from: selectedFolder
+                    )
                 }
             }
             .padding(.horizontal)
@@ -263,7 +266,8 @@ struct ContentView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 6)
 
-                if let loadingError {
+                if let loadingError =
+                    modelBrowserCoordinator.loadingError {
                     Text(loadingError)
                         .foregroundColor(.red)
                         .padding()
@@ -299,18 +303,25 @@ struct ContentView: View {
             WindowConfigurator()
         }
         .task {
-            if let savedDensityRawValue = UserDefaults.standard.string(
-                forKey: gridDensityDefaultsKey
-            ),
-               let savedDensity = GridDensity(rawValue: savedDensityRawValue) {
+            if let savedDensityRawValue =
+                UserDefaults.standard.string(
+                    forKey: gridDensityDefaultsKey
+                ),
+                let savedDensity =
+                    GridDensity(rawValue: savedDensityRawValue) {
                 gridDensity = savedDensity
             }
 
-            if let restoredFolder = folderBookmarkService.restoreFolder(),
-               let accessSession = FolderAccessSession(folder: restoredFolder) {
-                folderAccessSession = accessSession
-                selectedFolder = accessSession.folder
-                loadModels(from: accessSession.folder)
+            if let restoredFolder =
+                folderBookmarkService.restoreFolder() {
+                let didRestoreFolder =
+                    modelBrowserCoordinator.selectFolder(
+                        restoredFolder
+                    )
+
+                if !didRestoreFolder {
+                    modelBrowserCoordinator.clearModels()
+                }
             }
         }
     }
@@ -352,22 +363,6 @@ struct ContentView: View {
             ),
             count: columnCount
         )
-    }
-
-    private func loadModels(from folder: URL) {
-        Task {
-            do {
-                let loadedModels = try await modelLoaderService.loadModels(
-                    from: folder
-                )
-
-                models = loadedModels
-                loadingError = nil
-            } catch {
-                models = []
-                loadingError = error.localizedDescription
-            }
-        }
     }
 }
 
