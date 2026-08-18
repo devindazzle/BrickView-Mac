@@ -18,6 +18,10 @@
 //  ModelBrowserCoordinator. ContentView is responsible for presenting
 //  that state and coordinating UI-specific interactions.
 //
+//  The upper application controls use a Studio-inspired toolbar
+//  background, while the model area uses the dedicated model-area
+//  background color.
+//
 
 import SwiftUI
 
@@ -30,6 +34,20 @@ struct ContentView: View {
     private let gridSpacing: CGFloat = 20
     private let gridPadding: CGFloat = 16
     private let gridDensityDefaultsKey: String = "GridDensity"
+
+    private let toolbarBackgroundColor: Color =
+        Color(
+            red: 42.0 / 255.0,
+            green: 45.0 / 255.0,
+            blue: 52.0 / 255.0
+        )
+
+    private let modelAreaBackgroundColor: Color =
+        Color(
+            red: 36.0 / 255.0,
+            green: 37.0 / 255.0,
+            blue: 46.0 / 255.0
+        )
 
     @StateObject private var modelBrowserCoordinator =
         ModelBrowserCoordinator()
@@ -125,6 +143,12 @@ struct ContentView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 10)
+            .frame(
+                maxWidth: .infinity
+            )
+            .background(
+                toolbarBackgroundColor
+            )
 
             Divider()
 
@@ -228,7 +252,9 @@ struct ContentView: View {
                 .fixedSize()
                 .padding(.horizontal, 10)
                 .padding(.vertical, 6)
-                .background(Color(nsColor: .controlBackgroundColor))
+                .background(
+                    Color(nsColor: .controlBackgroundColor)
+                )
                 .cornerRadius(6)
 
                 Picker("Grid density", selection: $gridDensity) {
@@ -247,6 +273,12 @@ struct ContentView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
+            .frame(
+                maxWidth: .infinity
+            )
+            .background(
+                toolbarBackgroundColor
+            )
             .onChange(of: gridDensity) { newDensity in
                 UserDefaults.standard.set(
                     newDensity.rawValue,
@@ -285,7 +317,8 @@ struct ContentView: View {
                             ForEach(sortedModels) { model in
                                 ModelCardView(
                                     model: model,
-                                    sizeDefinition: thumbnailSizeDefinition
+                                    sizeDefinition:
+                                        thumbnailSizeDefinition
                                 )
                             }
                         }
@@ -298,7 +331,13 @@ struct ContentView: View {
                 maxHeight: .infinity,
                 alignment: .topLeading
             )
+            .background(
+                modelAreaBackgroundColor
+            )
         }
+        .background(
+            modelAreaBackgroundColor
+        )
         .background {
             WindowConfigurator()
         }
