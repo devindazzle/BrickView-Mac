@@ -50,6 +50,8 @@
 		3BE211983034A6630091F3CF /* ModelBrowserCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE211973034A6620091F3CF /* ModelBrowserCoordinatorTests.swift */; };
 		3BE2119C3034FA050091F3CF /* ModelContextMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE2119B3034FA050091F3CF /* ModelContextMenuView.swift */; };
 		3BE2119E3034FA500091F3CF /* RightClickDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE2119D3034FA500091F3CF /* RightClickDetector.swift */; };
+		3BE211A0303507EC0091F3CF /* WindowPersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE2119F303507EC0091F3CF /* WindowPersistenceService.swift */; };
+		3BE211A2303508380091F3CF /* WindowPersistenceServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BE211A1303508380091F3CF /* WindowPersistenceServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -116,6 +118,8 @@
 		3BE211973034A6620091F3CF /* ModelBrowserCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelBrowserCoordinatorTests.swift; sourceTree = "<group>"; };
 		3BE2119B3034FA050091F3CF /* ModelContextMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelContextMenuView.swift; sourceTree = "<group>"; };
 		3BE2119D3034FA500091F3CF /* RightClickDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightClickDetector.swift; sourceTree = "<group>"; };
+		3BE2119F303507EC0091F3CF /* WindowPersistenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPersistenceService.swift; sourceTree = "<group>"; };
+		3BE211A1303508380091F3CF /* WindowPersistenceServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowPersistenceServiceTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +197,7 @@
 				3BD32F2F3031BBCF00676D66 /* ThumbnailConfiguration.swift */,
 				3BD32F293031B81300676D66 /* ThumbnailLoader.swift */,
 				3B51543B3030A022001D70DC /* WindowConfigurator.swift */,
+				3BE2119F303507EC0091F3CF /* WindowPersistenceService.swift */,
 			);
 			path = BrickView;
 			sourceTree = "<group>";
@@ -222,6 +227,7 @@
 				3B5154623030C7CC001D70DC /* ModelThumbnailServiceTests.swift */,
 				3B5154663030C8C8001D70DC /* ModelThumbnailViewTests.swift */,
 				3BD32F313031BFDD00676D66 /* ThumbnailLoaderTests.swift */,
+				3BE211A1303508380091F3CF /* WindowPersistenceServiceTests.swift */,
 				3B9ACBE33033612C00A179F0 /* ZipArchivePasswordTests.swift */,
 			);
 			path = BrickViewTests;
@@ -399,6 +405,7 @@
 				3BE2119630349D950091F3CF /* ModelBrowserCoordinator.swift in Sources */,
 				3BD32F363031E97F00676D66 /* FolderAccessSession.swift in Sources */,
 				3BD32F3E3031FBDA00676D66 /* ModelFilterService.swift in Sources */,
+				3BE211A0303507EC0091F3CF /* WindowPersistenceService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,6 +420,7 @@
 				3B5154633030C7CC001D70DC /* ModelThumbnailServiceTests.swift in Sources */,
 				3BD32F403031FC9300676D66 /* ModelFilterServiceTests.swift in Sources */,
 				3B5154533030BC4B001D70DC /* ModelLoaderServiceTests.swift in Sources */,
+				3BE211A2303508380091F3CF /* WindowPersistenceServiceTests.swift in Sources */,
 				3BD32F323031BFDD00676D66 /* ThumbnailLoaderTests.swift in Sources */,
 				3B51544F3030B9A8001D70DC /* ModelMetadataServiceTests.swift in Sources */,
 				3B9ACBF43033892500A179F0 /* ModelFolderMonitorServiceTests.swift in Sources */,
