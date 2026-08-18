@@ -101,6 +101,11 @@ struct ModelCardView: View {
                         },
                         onCopyPath: {
                             copyPath()
+                        },
+                        onMenuHoverChanged: { hovering in
+                            if !hovering {
+                                onContextMenuDismissed()
+                            }
                         }
                     )
                     .position(
@@ -163,8 +168,8 @@ struct ModelCardView: View {
     }
 
     private var contextMenuXPosition: CGFloat {
-        let halfMenuWidth: CGFloat = 95
 
+        let halfMenuWidth: CGFloat = 95
         let minimumX: CGFloat = halfMenuWidth
 
         let maximumX: CGFloat =
@@ -181,6 +186,7 @@ struct ModelCardView: View {
     }
 
     private var contextMenuYPosition: CGFloat {
+
         let menuHeight: CGFloat = 76
         let halfMenuHeight: CGFloat =
             menuHeight / 2
@@ -202,6 +208,7 @@ struct ModelCardView: View {
     }
 
     private func revealInFinder() {
+
         NSWorkspace.shared.activateFileViewerSelecting(
             [model.id]
         )
@@ -210,6 +217,7 @@ struct ModelCardView: View {
     }
 
     private func copyPath() {
+
         NSPasteboard.general.clearContents()
 
         NSPasteboard.general.setString(

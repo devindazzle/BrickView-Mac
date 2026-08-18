@@ -10,8 +10,7 @@
 //  Displays the custom BrickView context menu for a model card.
 //
 //  The view is intentionally presentation-only. It does not determine
-//  when the menu is shown, which model is selected, or how menu actions
-//  are executed.
+//  which model is selected or how menu actions are executed.
 //
 //  The visual design follows BrickView's Studio-inspired dark UI:
 //
@@ -30,6 +29,7 @@ struct ModelContextMenuView: View {
 
     let onRevealInFinder: () -> Void
     let onCopyPath: () -> Void
+    let onMenuHoverChanged: (Bool) -> Void
 
     @State private var hoveredAction:
         ModelContextMenuAction?
@@ -101,6 +101,9 @@ struct ModelContextMenuView: View {
             x: 0,
             y: 5
         )
+        .onHover { hovering in
+            onMenuHoverChanged(hovering)
+        }
     }
 
     private func menuItem(
@@ -155,6 +158,7 @@ struct ModelContextMenuView: View {
 }
 
 private enum ModelContextMenuAction: Equatable {
+
     case revealInFinder
     case copyPath
 }
