@@ -5,6 +5,15 @@
 //  Created by Kim Pedersen on 16/08/2026.
 //
 
+//
+//  Purpose:
+//  Defines the thumbnail, card, and grid item dimensions used by
+//  BrickView's Small, Medium, and Large grid density presets.
+//
+//  The presets keep thumbnail and card geometry centralized so the
+//  model grid, card layout, and thumbnail loader use the same dimensions.
+//
+
 import CoreGraphics
 
 struct ThumbnailSizeDefinition: Equatable {
@@ -14,6 +23,7 @@ struct ThumbnailSizeDefinition: Equatable {
 }
 
 enum ThumbnailConfiguration {
+
     static let small = ThumbnailSizeDefinition(
         thumbnailSize: CGSize(
             width: 240,

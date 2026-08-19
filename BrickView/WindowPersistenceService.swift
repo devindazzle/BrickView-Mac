@@ -5,6 +5,20 @@
 //  Created by Kim Pedersen on 18/08/2026.
 //
 
+//
+//  Purpose:
+//  Persists and restores the BrickView window frame.
+//
+//  The service stores the window's size and position in UserDefaults
+//  and validates a saved frame against the currently visible screen
+//  areas before restoring it.
+//
+//  If the saved frame is missing or no longer fits an available display,
+//  a centered fallback frame is returned using the supplied default size.
+//  The service is UI-independent and does not own or manipulate an
+//  NSWindow directly.
+//
+
 import AppKit
 
 struct WindowPersistenceService {

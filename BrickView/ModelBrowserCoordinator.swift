@@ -39,12 +39,14 @@ final class ModelBrowserCoordinator: ObservableObject {
 
     private var folderAccessSession: FolderAccessSession?
     private var folderMonitoringTask: Task<Void, Never>?
+    private var modelLoadingTask: Task<Void, Never>?
 
     private let modelLoaderService = ModelLoaderService()
     private let modelFolderMonitorService = ModelFolderMonitorService()
 
     func selectFolder(_ folder: URL) -> Bool {
         stopFolderMonitoring()
+        cancelModelLoading()
 
         guard let accessSession = FolderAccessSession(folder: folder) else {
             selectedFolder = nil
@@ -68,7 +70,11 @@ final class ModelBrowserCoordinator: ObservableObject {
     }
 
     func loadModels(from folder: URL) {
-        Task {
+        cancelModelLoading()
+
+        let modelLoaderService = self.modelLoaderService
+
+        modelLoadingTask = Task { [weak self] in
             do {
                 let loadedModels = try await modelLoaderService.loadModels(
                     from: folder
@@ -78,15 +84,24 @@ final class ModelBrowserCoordinator: ObservableObject {
                     return
                 }
 
-                models = loadedModels
-                loadingError = nil
+                guard let coordinator = self else {
+                    return
+                }
+
+                coordinator.models = loadedModels
+                coordinator.loadingError = nil
+
             } catch {
                 guard !Task.isCancelled else {
                     return
                 }
 
-                models = []
-                loadingError = error.localizedDescription
+                guard let coordinator = self else {
+                    return
+                }
+
+                coordinator.models = []
+                coordinator.loadingError = error.localizedDescription
             }
         }
     }
@@ -253,6 +268,16 @@ final class ModelBrowserCoordinator: ObservableObject {
         return path
     }
 
+    /// Cancels the active model-loading task.
+    ///
+    /// A new folder selection must never allow a previous asynchronous
+    /// load to update the coordinator after the user has selected another
+    /// folder.
+    private func cancelModelLoading() {
+        modelLoadingTask?.cancel()
+        modelLoadingTask = nil
+    }
+
     /// Stops the active folder monitor.
     ///
     /// Cancellation alone does not guarantee that the AsyncStream will
@@ -267,6 +292,7 @@ final class ModelBrowserCoordinator: ObservableObject {
 
     deinit {
         folderMonitoringTask?.cancel()
+        modelLoadingTask?.cancel()
         modelFolderMonitorService.stopMonitoring()
     }
 }

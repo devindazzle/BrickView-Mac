@@ -59,6 +59,20 @@ struct ContentView: View {
     @State private var gridDensity: GridDensity = .medium
     @State private var contextMenuModelID: URL?
 
+    private var appVersion: String {
+        let shortVersion =
+            Bundle.main.object(
+                forInfoDictionaryKey: "CFBundleShortVersionString"
+            ) as? String ?? "0.0"
+
+        let buildVersion =
+            Bundle.main.object(
+                forInfoDictionaryKey: "CFBundleVersion"
+            ) as? String ?? "0"
+
+        return "\(shortVersion).\(buildVersion)"
+    }
+
     private var selectedFolderPath: String {
         guard let folder = modelBrowserCoordinator.selectedFolder else {
             return "No folder selected"
@@ -104,9 +118,15 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("BrickView")
-                    .font(.title2)
-                    .fontWeight(.bold)
+                HStack(spacing: 6) {
+                    Text("BrickView")
+                        .font(.title2)
+                        .fontWeight(.bold)
+
+                    Text("v\(appVersion)")
+                        .font(.body)
+                        .foregroundColor(.secondary)
+                }
 
                 Text(selectedFolderPath)
                     .foregroundColor(.secondary)
